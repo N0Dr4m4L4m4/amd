@@ -1,0 +1,154 @@
+-----------------------------------------------
+-- Delete eventually existing objects ---------
+-----------------------------------------------
+DROP TRIGGER IF EXISTS trig_del_rating on video;
+DROP TRIGGER IF EXISTS trig_del_film on film_related_person;
+
+DROP TABLE IF EXISTS Acts;
+DROP TABLE IF EXISTS rating;
+DROP TABLE IF EXISTS video;
+DROP TABLE IF EXISTS benutzer;
+DROP TABLE IF EXISTS film_related_person;
+
+
+
+-----------------------------------------------
+-- Create Tables ------------------------------
+-----------------------------------------------
+-- Video --
+CREATE TABLE video(
+    title VARCHAR(256) NOT NULL,-- UNIQUE,
+    release_year int NOT NULL,-- UNIQUE,
+    genre text[],
+    min_age int NOT NULL CHECK(min_age = 0 OR min_age = 6 OR min_age = 12 OR min_age = 16 OR min_age = 18),
+    duration INT NOT NULL,
+    episode_nr INT CHECK(episode_nr > 0),
+    season_nr INT  CHECK(season_nr > 0),
+    series_name text not NULL,
+    PRIMARY KEY(title, release_year)
+    --UNIQUE(title, release_year)
+);
+
+-- Benutzer --
+CREATE table benutzer(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR (256) NOT null,
+    age int NOT NULL CHECK(age > 0)
+);
+
+-- Rating --
+CREATE TABLE rating(
+   title VARCHAR(256) NOT NULL,-- REFERENCES video(title),
+   release_year int NOT NULL,-- REFERENCES video(release_year),
+   id int NOT NULL REFERENCES benutzer(id),
+   rating int NOT NULL CHECK(rating BETWEEN 1 AND 5),
+   PRIMARY KEY(id, title, release_year),
+   CONSTRAINT fk_rating_video
+      FOREIGN KEY(title, release_year) 
+	  REFERENCES video(title, release_year)
+	  --ON DELETE CASCADE --durch trigger bereits implementiert	  
+);
+
+-- Film related person --
+CREATE table film_related_person(
+    surname VARCHAR(256) NOT NULL,-- UNIQUE,
+    forname VARCHAR (256) NOT NULL,-- UNIQUE,
+    date_of_birth DATE,
+    sex varchar(1) CHECK(sex='m' OR sex='w' OR sex='d'),
+    PRIMARY KEY(surname, forname)
+    --UNIQUE(surname, forname)
+);
+
+-- Acts --
+CREATE TABLE Acts(
+   title VARCHAR(256) NOT NULL,-- REFERENCES video(title) ON DELETE SET NULL,
+   release_year int NOT NULL,-- REFERENCES video(release_year) ON DELETE SET NULL,
+   surname VARCHAR(256) NOT NULL,-- REFERENCES film_related_person(surname) ON DELETE CASCADE,
+   forname VARCHAR(256) NOT NULL,-- REFERENCES film_related_person(forname) ON DELETE CASCADE,
+   role text[],
+   PRIMARY KEY(surname, forname, title, release_year),
+   CONSTRAINT fk_acts_video
+      FOREIGN KEY(title, release_year) 
+	  REFERENCES video(title, release_year)
+	  ON DELETE CASCADE,
+   CONSTRAINT fk_acts_person
+      FOREIGN KEY(surname, forname) 
+	  REFERENCES film_related_person(surname, forname)
+	  ON DELETE CASCADE
+);
+
+-----------------------------------------------
+-- Create Trigger and Trigger functions -------
+-----------------------------------------------
+-- delete ratings, when film gets deleted --
+CREATE OR REPLACE FUNCTION del_rating() RETURNS TRIGGER AS $$
+  BEGIN
+    DELETE FROM Rating
+      WHERE release_year = old.release_year and title = old.title;
+    RETURN OLD; --OLD important here because before trigger
+  END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trig_del_rating BEFORE DELETE ON video
+  FOR EACH ROW
+    EXECUTE PROCEDURE del_rating();
+-- statt dieser funktion koennte man auch ON DELETE CASCADE verwenden nach fk_constraint
+
+-- delete film, when film related person gets deleted --
+CREATE OR REPLACE FUNCTION del_film() RETURNS TRIGGER AS $$
+  BEGIN
+    DELETE FROM Video
+      WHERE release_year = (select release_year from acts where acts.surname = old.surname and acts.forname = old.forname)
+        AND title = (select title from acts where acts.surname = old.surname and acts.forname = old.forname);
+    RETURN OLD; --OLD important here because before trigger
+  END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trig_del_film BEFORE DELETE ON film_related_person
+  FOR EACH ROW
+    EXECUTE PROCEDURE del_film();
+
+-----------------------------------------------
+-- Insert Test Data ---------------------------
+-----------------------------------------------
+INSERT INTO benutzer(name,age)
+ VALUES('Harry',18);
+
+INSERT INTO video (title,release_year,genre,min_age,duration,series_name)
+  VALUES('Der Feuerkelch',2010,'{Abenteuer}',12,240,'Harry Potter'),
+    ('Beginn',2008,'{Action, Sci-Fi}',6,200,'Transformers');
+
+INSERT INTO video (title,release_year,genre,min_age,duration,series_name)
+  VALUES('test',2010,'{Abenteuer}',12,210,'Harry Potter');
+
+INSERT INTO rating(title,release_year,id,rating) 
+ VALUES('Der Feuerkelch',2010,1,5);
+
+INSERT INTO film_related_person(surname,forname)
+ VALUES('Gans','Hans');
+
+INSERT INTO film_related_person(surname, forname, date_of_birth, sex) 
+ VALUES('Watson', 'Emma', '2000-01-01', 'w');
+
+INSERT INTO acts(title,release_year,surname,forname, role) 
+  VALUES('Der Feuerkelch',2010,'Watson', 'Emma', '{Schauspieler}'),
+  ('test',2010,'Watson', 'Emma', '{Schauspieler}');
+
+-----------------------------------------------
+-- Test Functions -----------------------------
+-----------------------------------------------
+-- delete film, 
+-- then ratings in rating should be deleted too --
+--delete from video where title='Der Feuerkelch' and release_year = 2010;
+--select * from video;
+--select * from rating;
+
+-- delete film related person,
+-- then role in acts and film in video should be deleted too
+--delete from film_related_person where surname='Watson';
+--select * from film_related_person;
+--select * from acts;
+--select * from video;
+
+
+
