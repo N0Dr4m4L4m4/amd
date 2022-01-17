@@ -137,18 +137,21 @@ INSERT INTO acts(title,release_year,surname,forname, role)
 -----------------------------------------------
 -- Test Functions -----------------------------
 -----------------------------------------------
--- delete film, 
+-- delete film, --
 -- then ratings in rating should be deleted too --
 --delete from video where title='Der Feuerkelch' and release_year = 2010;
 --select * from video;
 --select * from rating;
 
--- delete film related person,
--- then role in acts and film in video should be deleted too
+-- delete film related person, --
+-- then role in acts and film in video should be deleted too --
 --delete from film_related_person where surname='Watson';
 --select * from film_related_person;
 --select * from acts;
 --select * from video;
 
+-- Anzeige von allen Filmen mit Genre Abenteuer --
+-- then sollten auch alle angezeigt werden mit Abenteuer --
+--select * from video where 'Abenteuer' = ANY(genre)
 
 
