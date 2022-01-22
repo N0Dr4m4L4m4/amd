@@ -4,6 +4,15 @@
 DROP TRIGGER IF EXISTS trig_del_rating on video;
 DROP TRIGGER IF EXISTS trig_also_del_film on film_related_person;
 
+DROP FUNCTION IF EXISTS check_user();
+DROP FUNCTION IF EXISTS insert_video();
+DROP FUNCTION IF EXISTS insert_video_role();
+DROP FUNCTION IF EXISTS show_all_videos();
+DROP FUNCTION IF EXISTS update_video();
+DROP FUNCTION IF EXISTS del_series();
+DROP FUNCTION IF EXISTS del_season();
+DROP FUNCTION IF EXISTS del_video();
+
 DROP TABLE IF EXISTS Acts;
 DROP TABLE IF EXISTS rating;
 DROP TABLE IF EXISTS video;
@@ -17,7 +26,7 @@ DROP TABLE IF EXISTS film_related_person;
 -----------------------------------------------
 -- Video --
 CREATE TABLE video(
-    title VARCHAR(256) NOT NULL,
+    title TEXT NOT NULL,
     release_year int NOT NULL,
     genre text[],
     min_age int NOT NULL CHECK(min_age = 0 OR min_age = 6 OR min_age = 12 OR min_age = 16 OR min_age = 18),
@@ -30,31 +39,33 @@ CREATE TABLE video(
 
 -- Benutzer --
 CREATE table benutzer(
-    name VARCHAR (256) PRIMARY KEY,
+    name TEXT PRIMARY KEY,
     age int NOT NULL CHECK(age > 0)
 );
 
 -- Rating --
 CREATE TABLE rating(
-   title VARCHAR(256) NOT NULL,
+   title TEXT NOT NULL,
    release_year int NOT NULL,
-   name VARCHAR (256) NOT NULL, --REFERENCES benutzer(id),
+   name TEXT NOT NULL, --REFERENCES benutzer(id),
    rating int NOT NULL CHECK(rating BETWEEN 1 AND 5),
    PRIMARY KEY(name, title, release_year),
    CONSTRAINT fk_rating_video
       FOREIGN KEY(title, release_year) 
 	      REFERENCES video(title, release_year)
-	        ON DELETE CASCADE,
+	        ON DELETE CASCADE
+		ON UPDATE CASCADE,
    CONSTRAINT fk_rating_benutzer
       FOREIGN KEY(name) 
 	      REFERENCES benutzer(name)
 	        ON DELETE CASCADE
+		ON UPDATE CASCADE
 );
 
 -- Film related person --
 CREATE table film_related_person(
-    surname VARCHAR(256) NOT NULL,
-    forname VARCHAR (256) NOT NULL,
+    surname TEXT NOT NULL,
+    forname TEXT NOT NULL,
     date_of_birth DATE,
     sex varchar(1) CHECK(sex='m' OR sex='w' OR sex='d'),
     PRIMARY KEY(surname, forname)
@@ -63,20 +74,22 @@ CREATE table film_related_person(
 
 -- Acts --
 CREATE TABLE Acts(
-   title VARCHAR(256) NOT NULL,
+   title TEXT NOT NULL,
    release_year int NOT NULL,
-   surname VARCHAR(256) NOT NULL,
-   forname VARCHAR(256) NOT NULL,
+   surname TEXT NOT NULL,
+   forname TEXT NOT NULL,
    role text[],
    PRIMARY KEY(surname, forname, title, release_year),
    CONSTRAINT fk_acts_video
       FOREIGN KEY(title, release_year) 
 	      REFERENCES video(title, release_year)
-	        ON DELETE CASCADE,
+	        ON DELETE CASCADE
+		ON UPDATE CASCADE,
    CONSTRAINT fk_acts_person
       FOREIGN KEY(surname, forname) 
 	      REFERENCES film_related_person(surname, forname)
 	        ON DELETE CASCADE
+		ON UPDATE CASCADE
 );
 
 -----------------------------------------------
@@ -115,24 +128,7 @@ CREATE TRIGGER trig_also_del_film BEFORE DELETE ON film_related_person
 -----------------------------------------------
 -- Functions ----------------------------------
 -----------------------------------------------
--- Film Management ----------------------------
--- Film hinzufügen --
-CREATE OR REPLACE FUNCTION insert_video(IN tit VARCHAR, IN rel INT, IN gen TEXT[], IN min INT, IN dur INT, IN epi INT, IN sea INT, IN ser TEXT) RETURNS VOID AS $$
-  BEGIN
-    INSERT INTO video (title, release_year, genre, min_age, duration, episode_nr, season_nr, series_name)
-      VALUES(tit, rel, gen, min, dur, epi, sea, ser);
-  END;
-$$ LANGUAGE plpgsql;
-
--- Im neu hinzugefügten Film eine mitwirkende Person einfügen --
-CREATE OR REPLACE FUNCTION insert_video_role(IN tit VARCHAR, IN rel INT, IN sur TEXT, IN forn TEXT, IN rol TEXT[]) RETURNS VOID AS $$
-  BEGIN
-    INSERT INTO acts(title,release_year,surname,forname,role) 
-      VALUES(tit, rel,sur,forn,rol);
-  END;
-$$ LANGUAGE plpgsql;
-
--- check user --
+-- check user login ---------------------------
 CREATE OR REPLACE FUNCTION check_user(IN benutzer_name TEXT) RETURNS TEXT AS $$
   BEGIN
     IF ((select name from benutzer where name=benutzer_name) IS NULL) then
@@ -140,6 +136,91 @@ CREATE OR REPLACE FUNCTION check_user(IN benutzer_name TEXT) RETURNS TEXT AS $$
     ELSE
       return 'Herzlich Willkommen!';
     END IF;
+  END;
+$$ LANGUAGE plpgsql;
+
+
+-- Film Management ----------------------------
+-- Film hinzufügen --
+CREATE OR REPLACE FUNCTION insert_video(IN tit TEXT, IN rel INT, IN gen TEXT[], IN min INT, IN dur INT, IN epi INT, IN sea INT, IN ser TEXT) RETURNS VOID AS $$
+  BEGIN
+    INSERT INTO video (title, release_year, genre, min_age, duration, episode_nr, season_nr, series_name)
+      VALUES(tit, rel, gen, min, dur, epi, sea, ser);
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Im neu hinzugefügten Film eine mitwirkende Person einfügen --
+CREATE OR REPLACE FUNCTION insert_video_role(IN tit TEXT, IN rel INT, IN sur TEXT, IN forn TEXT, IN rol TEXT[]) RETURNS VOID AS $$
+  BEGIN
+    INSERT INTO acts(title,release_year,surname,forname,role) 
+      VALUES(tit, rel,sur,forn,rol);
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Überblick über alle Filme in der Datenbank --
+CREATE OR REPLACE FUNCTION show_all_videos() RETURNS table (Videoname text) AS $$
+  BEGIN
+    RETURN QUERY
+    SELECT distinct(series_name) FROM video
+    ORDER BY series_name;
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Ändern der Filmattribute --
+CREATE OR REPLACE FUNCTION update_video(IN old_tit TEXT, IN old_rel int, IN tit TEXT, IN rel INT, IN gen TEXT[], IN min INT, IN dur INT, IN epi INT, IN sea INT, IN ser TEXT) RETURNS VOID AS $$
+  BEGIN
+    UPDATE video
+      SET title = tit,
+        release_year = rel,
+	genre = gen,
+	min_age = min,
+	duration = dur,
+	episode_nr = epi,
+	season_nr = sea,
+	series_name = ser
+      WHERE title = old_tit and release_year = old_rel;
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Löschen von Videos --
+CREATE OR REPLACE FUNCTION del_series(IN ser TEXT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT) AS $$
+  BEGIN
+    RETURN QUERY
+    DELETE FROM video
+      WHERE series_name = ser
+      RETURNING *; --return deleted elements
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Löschen von Videos --
+CREATE OR REPLACE FUNCTION del_season(IN old_tit TEXT, IN old_rel int, IN tit TEXT, IN rel INT, IN gen TEXT[], IN min INT, IN dur INT, IN epi INT, IN sea INT, IN ser TEXT) RETURNS VOID AS $$
+  BEGIN
+    UPDATE video
+      SET title = tit,
+        release_year = rel,
+	genre = gen,
+	min_age = min,
+	duration = dur,
+	episode_nr = epi,
+	season_nr = sea,
+	series_name = ser
+      WHERE title = old_tit and release_year = old_rel;
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Löschen von Videos --
+CREATE OR REPLACE FUNCTION del_video(IN old_tit TEXT, IN old_rel int, IN tit TEXT, IN rel INT, IN gen TEXT[], IN min INT, IN dur INT, IN epi INT, IN sea INT, IN ser TEXT) RETURNS VOID AS $$
+  BEGIN
+    UPDATE video
+      SET title = tit,
+        release_year = rel,
+	genre = gen,
+	min_age = min,
+	duration = dur,
+	episode_nr = epi,
+	season_nr = sea,
+	series_name = ser
+      WHERE title = old_tit and release_year = old_rel;
   END;
 $$ LANGUAGE plpgsql;
 
@@ -269,3 +350,12 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 
 -- Check User login --
 --select * from check_user('Axel');
+
+-- show_all_videos --
+--select * from show_all_videos();
+
+-- update video attributes --
+--select * from update_video('Musterfilm',2004, 'Musterfilmchen',2014,'{Action,Fantasy,Drama}',16,130, 1, NULL, 'Stirb Langsamer')
+
+-- delete series --
+--select * from del_series('Harry Potter');
