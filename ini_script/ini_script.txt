@@ -358,4 +358,7 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 --select * from update_video('Musterfilm',2004, 'Musterfilmchen',2014,'{Action,Fantasy,Drama}',16,130, 1, NULL, 'Stirb Langsamer')
 
 -- delete series --
+-- then all Harray Potter movies should be deleted and put out --
 --select * from del_series('Harry Potter');
+
+--TODO: functions del_season and del_video
