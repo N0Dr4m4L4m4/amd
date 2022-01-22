@@ -30,8 +30,7 @@ CREATE TABLE video(
 
 -- Benutzer --
 CREATE table benutzer(
-    id SERIAL PRIMARY KEY,
-    name VARCHAR (256) NOT null,
+    name VARCHAR (256) PRIMARY KEY,
     age int NOT NULL CHECK(age > 0)
 );
 
@@ -39,16 +38,16 @@ CREATE table benutzer(
 CREATE TABLE rating(
    title VARCHAR(256) NOT NULL,
    release_year int NOT NULL,
-   id int NOT NULL, --REFERENCES benutzer(id),
+   name VARCHAR (256) NOT NULL, --REFERENCES benutzer(id),
    rating int NOT NULL CHECK(rating BETWEEN 1 AND 5),
-   PRIMARY KEY(id, title, release_year),
+   PRIMARY KEY(name, title, release_year),
    CONSTRAINT fk_rating_video
       FOREIGN KEY(title, release_year) 
 	      REFERENCES video(title, release_year)
 	        ON DELETE CASCADE,
    CONSTRAINT fk_rating_benutzer
-      FOREIGN KEY(id) 
-	      REFERENCES benutzer(id)
+      FOREIGN KEY(name) 
+	      REFERENCES benutzer(name)
 	        ON DELETE CASCADE
 );
 
@@ -133,6 +132,17 @@ CREATE OR REPLACE FUNCTION insert_video_role(IN tit VARCHAR, IN rel INT, IN sur 
   END;
 $$ LANGUAGE plpgsql;
 
+-- check user --
+CREATE OR REPLACE FUNCTION check_user(IN benutzer_name TEXT) RETURNS TEXT AS $$
+  BEGIN
+    IF ((select name from benutzer where name=benutzer_name) IS NULL) then
+      return 'Benutzer existiert nicht';
+    ELSE
+      return 'Herzlich Willkommen!';
+    END IF;
+  END;
+$$ LANGUAGE plpgsql;
+
 -----------------------------------------------
 -- Insert Dummy Data --------------------------
 -----------------------------------------------
@@ -167,32 +177,32 @@ INSERT INTO video (title, release_year, genre, min_age, duration, episode_nr, se
     ('Musterfilm',2004,'{Action,Krimi,Drama}',18,180, 1, NULL, 'Stirb Langsam'),
     ('Romantische Episode',2019,'{Drama,Romantik,Herzschmerz}',0,128, 12, 1, 'Moderne Romanzen');
 
-INSERT INTO rating(title,release_year,id,rating) 
-  VALUES('Der Pate',1972,2,4), --Axel
-  ('Geheimnisse',2017,2,5),
-  ('Die Reisenden',2018,2,5),
-  ('Kindisch',1988,2,1),
-  ('Musterfilm',2004,2,3),
-  ('Harry Potter und der Stein der Weisen',2001,3,3), --Robin
-  ('Harry Potter und der Gefangene von Askaban',2004,3,5),
-  ('Musterfilm',2004,3,2),
-  ('Romantische Episode',2019,3,2),
-  ('Harry Potter und die Kammer des Schreckens',2002,3,5),
-  ('Romantische Episode',2019,4,5), --Sabine
-  ('Musterfilm',2004,4,5),
-  ('Harry Potter und der Gefangene von Askaban',2004,4,1),
-  ('Harry Potter und der Stein der Weisen',2001,4,2),
-  ('Der Pate',1972,4,4),
-  ('Harry Potter und der Stein der Weisen',2001,5,1), --Tina
-  ('Harry Potter und die Kammer des Schreckens',2002,5,4),
-  ('Harry Potter und der Gefangene von Askaban',2004,5,2),
-  ('Harry Potter und der Feuerkelch',2005,5,1),
-  ('Geheimnisse',2017,5,3),
-  ('Die Reisenden',2018,5,2),
-  ('Der Pate',1972,5,4),
-  ('Kindisch',1988,5,5),
-  ('Musterfilm',2004,5,4),
-  ('Romantische Episode',2019,5,1);
+INSERT INTO rating(title,release_year,name,rating) 
+  VALUES('Der Pate',1972,'Axel',4),
+  ('Geheimnisse',2017,'Axel',5),
+  ('Die Reisenden',2018,'Axel',5),
+  ('Kindisch',1988,'Axel',1),
+  ('Musterfilm',2004,'Axel',3),
+  ('Harry Potter und der Stein der Weisen',2001,'Robin',3),
+  ('Harry Potter und der Gefangene von Askaban',2004,'Robin',5),
+  ('Musterfilm',2004,'Robin',3),
+  ('Romantische Episode',2019,'Robin',2),
+  ('Harry Potter und die Kammer des Schreckens',2002,'Robin',5),
+  ('Romantische Episode',2019,'Sabine',5),
+  ('Musterfilm',2004,'Sabine',5),
+  ('Harry Potter und der Gefangene von Askaban',2004,'Sabine',1),
+  ('Harry Potter und der Stein der Weisen',2001,'Sabine',2),
+  ('Der Pate',1972,'Sabine',4),
+  ('Harry Potter und der Stein der Weisen',2001,'Tina',1),
+  ('Harry Potter und die Kammer des Schreckens',2002,'Tina',4),
+  ('Harry Potter und der Gefangene von Askaban',2004,'Tina',2),
+  ('Harry Potter und der Feuerkelch',2005,'Tina',1),
+  ('Geheimnisse',2017,'Tina',3),
+  ('Die Reisenden',2018,'Tina',2),
+  ('Der Pate',1972,'Tina',4),
+  ('Kindisch',1988,'Tina',5),
+  ('Musterfilm',2004,'Tina',4),
+  ('Romantische Episode',2019,'Tina',1);
 
 INSERT INTO acts(title,release_year,surname,forname,role) 
   VALUES('Harry Potter und der Stein der Weisen',2001, 'Watson', 'Emma', '{Schauspieler}'),
@@ -254,5 +264,8 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 
 -- Aufruf Funktion zum Hinzufügen eines Films samt im Film mitwikrender Person --
 -- then sollte Eintrag eingefügt werden
-select insert_video('Harry Potter und der Test',2001,'{Fantasy,Abenteuer}',12,140, 1, NULL, 'Harry Potter');
-select insert_video_role('Harry Potter und der Test',2001,'Watson','Emma', '{Schauspieler, Statist}');
+--select insert_video('Harry Potter und der Test',2001,'{Fantasy,Abenteuer}',12,140, 1, NULL, 'Harry Potter');
+--select insert_video_role('Harry Potter und der Test',2001,'Watson','Emma', '{Schauspieler, Statist}');
+
+-- Check User login --
+--select * from check_user('Axel');
