@@ -307,6 +307,23 @@ CREATE OR REPLACE FUNCTION show_all_ratings() RETURNS TABLE(Titel TEXT, Erschein
   END;
 $$ LANGUAGE plpgsql;
 
+-- Filmvorschläge -----------------------------
+CREATE OR REPLACE FUNCTION suggestion(IN nam TEXT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT) AS $$
+  BEGIN
+    -- user hat keine videos bewertet:
+    IF (SELECT COUNT(*) FROM rating where name=nam) = 0 THEN
+      RETURN NULL;
+    -- user hat alle videos bewertet:  
+    ELSIF (SELECT COUNT(*) FROM rating where name=nam) = (SELECT COUNT(*) FROM video) THEN
+      RETURN NULL;
+    ELSE
+    --TBD
+    --RETURN QUERY
+    --SELECT * FROM rating
+    --ORDER BY name, title, release_year;
+  END;
+$$ LANGUAGE plpgsql;
+
 -----------------------------------------------
 -- Insert Dummy Data --------------------------
 -----------------------------------------------
