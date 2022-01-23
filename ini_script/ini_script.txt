@@ -18,6 +18,8 @@ DROP FUNCTION IF EXISTS insert_person(TEXT, TEXT, DATE, VARCHAR(1));
 DROP FUNCTION IF EXISTS show_all_persons();
 DROP FUNCTION IF EXISTS update_person(TEXT, TEXT, TEXT, TEXT, DATE, VARCHAR(1));
 DROP FUNCTION IF EXISTS del_person(TEXT, TEXT, DATE, VARCHAR(1));
+DROP FUNCTION IF EXISTS edit_rating(TEXT, INT, TEXT, INT);
+DROP FUNCTION IF EXISTS show_all_ratings();
 
 DROP TABLE IF EXISTS Acts;
 DROP TABLE IF EXISTS rating;
@@ -270,6 +272,41 @@ CREATE OR REPLACE FUNCTION del_person(IN sur TEXT, IN forn TEXT) RETURNS TABLE(N
   END;
 $$ LANGUAGE plpgsql;
 
+-- Filmbewertungen Management -----------------
+-- insert new rating --
+CREATE OR REPLACE FUNCTION edit_rating(IN tit TEXT, IN rel INT, IN nam TEXT, IN rat INT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Benutzer TEXT, Bewertung INT) AS $$
+  BEGIN
+    IF EXISTS (SELECT * FROM rating WHERE title=tit and release_year=rel and name=nam) THEN
+      IF rat IS NULL THEN
+        RETURN QUERY
+	DELETE FROM rating
+	  WHERE title=tit and release_year=rel and name=nam
+	  RETURNING *;
+      ELSE
+        RETURN QUERY
+        UPDATE rating
+          SET rating=rat
+	  WHERE title=tit and release_year=rel and name=nam
+          RETURNING *;
+      END IF;
+    ELSE
+      RETURN QUERY
+      INSERT INTO rating(title, release_year, name, rating)
+        VALUES(tit, rel, nam, rat)
+        RETURNING *;
+    END IF;
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Überblick über alle Ratings in der Datenbank --
+CREATE OR REPLACE FUNCTION show_all_ratings() RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Benutzer TEXT, Bewertung INT) AS $$
+  BEGIN
+    RETURN QUERY
+    SELECT * FROM rating
+    ORDER BY name, title, release_year;
+  END;
+$$ LANGUAGE plpgsql;
+
 -----------------------------------------------
 -- Insert Dummy Data --------------------------
 -----------------------------------------------
@@ -431,3 +468,14 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 -- delete person --
 -- then person should be deleted and put out --
 --select * from del_person('Stiebitz', 'Gina');
+
+-- insert rating --
+-- then rating should be inserted if not existing, or updated if existing and new rating is not null otherwise deleted --
+--select * from edit_rating('Geheimnisse', 2017, 'Mats', 5); --insert new rating
+--select * from edit_rating('Geheimnisse', 2017, 'Mats', 3); --update rating
+--select * from edit_rating('Geheimnisse', 2017, 'Mats', NULL); --delete rating
+
+-- show all ratings --
+-- then all ratings should be shown --
+--select * from show_all_ratings();
+
