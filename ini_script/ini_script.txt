@@ -4,6 +4,8 @@
 DROP TRIGGER IF EXISTS trig_del_rating on video;
 DROP TRIGGER IF EXISTS trig_also_del_film on film_related_person;
 
+DROP FUNCTION IF EXISTS also_del_film();
+
 DROP FUNCTION IF EXISTS check_user(TEXT);
 DROP FUNCTION IF EXISTS insert_video(TEXT, INT, TEXT[], INT, INT, INT, INT, TEXT);
 DROP FUNCTION IF EXISTS insert_video_role(TEXT, INT, TEXT, TEXT, TEXT[]);
@@ -12,6 +14,10 @@ DROP FUNCTION IF EXISTS update_video(TEXT, int, TEXT, INT, TEXT[], INT, INT, INT
 DROP FUNCTION IF EXISTS del_series(TEXT);
 DROP FUNCTION IF EXISTS del_season(TEXT, INT);
 DROP FUNCTION IF EXISTS del_video(TEXT, INT);
+DROP FUNCTION IF EXISTS insert_person(TEXT, TEXT, DATE, VARCHAR(1));
+DROP FUNCTION IF EXISTS show_all_persons();
+DROP FUNCTION IF EXISTS update_person(TEXT, TEXT, TEXT, TEXT, DATE, VARCHAR(1));
+DROP FUNCTION IF EXISTS del_person(TEXT, TEXT, DATE, VARCHAR(1));
 
 DROP TABLE IF EXISTS Acts;
 DROP TABLE IF EXISTS rating;
@@ -88,7 +94,7 @@ CREATE TABLE Acts(
    CONSTRAINT fk_acts_person
       FOREIGN KEY(surname, forname) 
 	      REFERENCES film_related_person(surname, forname)
-	        ON DELETE CASCADE
+	        ON DELETE CASCADE --kann evtl weglassen, wegen trigger also_del_film()
 		ON UPDATE CASCADE
 );
 
@@ -114,16 +120,18 @@ CREATE TABLE Acts(
 -- delete film, when film related person gets deleted --
 CREATE OR REPLACE FUNCTION also_del_film() RETURNS TRIGGER AS $$
   BEGIN
-    DELETE FROM Video
-      WHERE release_year = (select release_year from acts where acts.surname = old.surname and acts.forname = old.forname)
-        AND title = (select title from acts where acts.surname = old.surname and acts.forname = old.forname);
+    FOR i in 1..(SELECT COUNT(*) FROM acts where surname='Stiebitz' and forname='Gina') LOOP
+      DELETE FROM Video
+        WHERE release_year = (select release_year from acts where acts.surname = old.surname and acts.forname = old.forname LIMIT 1)
+          AND title = (select title from acts where acts.surname = old.surname and acts.forname = old.forname LIMIT 1);
+    END LOOP;
     RETURN OLD; --OLD important here because before trigger
   END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trig_also_del_film BEFORE DELETE ON film_related_person
   FOR EACH ROW
-    EXECUTE PROCEDURE del_film();
+    EXECUTE PROCEDURE also_del_film();
 
 -----------------------------------------------
 -- Functions ----------------------------------
@@ -162,7 +170,7 @@ CREATE OR REPLACE FUNCTION insert_video_role(IN tit TEXT, IN rel INT, IN sur TEX
 $$ LANGUAGE plpgsql;
 
 -- Überblick über alle Filme in der Datenbank --
-CREATE OR REPLACE FUNCTION show_all_videos() RETURNS table (Videoname text) AS $$
+CREATE OR REPLACE FUNCTION show_all_videos() RETURNS table(Videoname text) AS $$
   BEGIN
     RETURN QUERY
     SELECT distinct(series_name) FROM video
@@ -220,13 +228,47 @@ $$ LANGUAGE plpgsql;
 
 -- Film Person Management ---------------------
 -- Person hinzufügen --
-CREATE OR REPLACE FUNCTION insert_person(IN tit TEXT, IN rel INT, IN gen TEXT[], IN min INT, IN dur INT, IN epi INT, IN sea INT, IN ser TEXT) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION insert_person(IN sur TEXT, IN forn TEXT, IN dat DATE, IN new_sex VARCHAR(1)) RETURNS TABLE(Nachname TEXT, Vorname TEXT, Geburtstag DATE, Geschlecht VARCHAR(1)) AS $$
   BEGIN
-    INSERT INTO video (title, release_year, genre, min_age, duration, episode_nr, season_nr, series_name)
-      VALUES(tit, rel, gen, min, dur, epi, sea, ser);
+    RETURN QUERY
+    INSERT INTO film_related_person(surname, forname, date_of_birth, sex)
+      VALUES(sur, forn, dat, new_sex)
+      RETURNING *;
   END;
 $$ LANGUAGE plpgsql;
 
+-- Überblick über alle Filme in der Datenbank --
+CREATE OR REPLACE FUNCTION show_all_persons() RETURNS TABLE(Nachname TEXT, Vorname TEXT, Geburtstag DATE, Geschlecht VARCHAR(1)) AS $$
+  BEGIN
+    RETURN QUERY
+    SELECT * FROM film_related_person
+    ORDER BY surname, forname;
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Ändern der Personenattributen --
+CREATE OR REPLACE FUNCTION update_person(IN old_sur TEXT, IN old_forn TEXT, IN sur TEXT, IN forn TEXT, IN dat DATE, IN new_sex VARCHAR(1)) RETURNS TABLE(Nachname TEXT, Vorname TEXT, Geburtstag DATE, Geschlecht VARCHAR(1)) AS $$
+  BEGIN
+    RETURN QUERY
+    UPDATE film_related_person
+      SET surname = sur,
+        forname = forn,
+	date_of_birth = dat,
+	sex = new_sex
+      WHERE surname = old_sur and forname = old_forn
+      RETURNING *; --returning updated row
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Löschen von Personen --
+CREATE OR REPLACE FUNCTION del_person(IN sur TEXT, IN forn TEXT) RETURNS TABLE(Nachname TEXT, Vorname TEXT, Geburtstag DATE, Geschlecht VARCHAR(1)) AS $$
+  BEGIN
+    RETURN QUERY
+    DELETE FROM film_related_person
+      WHERE surname = sur AND forname = forn
+      RETURNING *; --return deleted element
+  END;
+$$ LANGUAGE plpgsql;
 
 -----------------------------------------------
 -- Insert Dummy Data --------------------------
@@ -373,3 +415,19 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 -- delete video --
 -- then the Dark episode 'Geheimnisse' from season 1 should be deleted and put out --
 --select * from del_video('Geheimnisse', 2017);
+
+-- insert film related person --
+-- then person should be inserted and put out --
+--select * from insert_person('Tester', 'Hans', '1999-12-12', 'd')
+
+-- show all persons --
+-- then all persons should be printed out --
+--select * from show_all_persons();
+
+-- update person --
+-- then person attributes should be updated and put out --
+--select * from update_person('Watson', 'Emma', 'Watdaughter', 'Remy', NULL, NULL);
+
+-- delete person --
+-- then person should be deleted and put out --
+--select * from del_person('Stiebitz', 'Gina');
