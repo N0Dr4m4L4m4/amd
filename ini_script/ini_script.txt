@@ -4,14 +4,14 @@
 DROP TRIGGER IF EXISTS trig_del_rating on video;
 DROP TRIGGER IF EXISTS trig_also_del_film on film_related_person;
 
-DROP FUNCTION IF EXISTS check_user();
-DROP FUNCTION IF EXISTS insert_video();
-DROP FUNCTION IF EXISTS insert_video_role();
+DROP FUNCTION IF EXISTS check_user(TEXT);
+DROP FUNCTION IF EXISTS insert_video(TEXT, INT, TEXT[], INT, INT, INT, INT, TEXT);
+DROP FUNCTION IF EXISTS insert_video_role(TEXT, INT, TEXT, TEXT, TEXT[]);
 DROP FUNCTION IF EXISTS show_all_videos();
-DROP FUNCTION IF EXISTS update_video();
-DROP FUNCTION IF EXISTS del_series();
-DROP FUNCTION IF EXISTS del_season();
-DROP FUNCTION IF EXISTS del_video();
+DROP FUNCTION IF EXISTS update_video(TEXT, int, TEXT, INT, TEXT[], INT, INT, INT, INT, TEXT);
+DROP FUNCTION IF EXISTS del_series(TEXT);
+DROP FUNCTION IF EXISTS del_season(TEXT, INT);
+DROP FUNCTION IF EXISTS del_video(TEXT, INT);
 
 DROP TABLE IF EXISTS Acts;
 DROP TABLE IF EXISTS rating;
@@ -142,18 +142,22 @@ $$ LANGUAGE plpgsql;
 
 -- Film Management ----------------------------
 -- Film hinzufügen --
-CREATE OR REPLACE FUNCTION insert_video(IN tit TEXT, IN rel INT, IN gen TEXT[], IN min INT, IN dur INT, IN epi INT, IN sea INT, IN ser TEXT) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION insert_video(IN tit TEXT, IN rel INT, IN gen TEXT[], IN min INT, IN dur INT, IN epi INT, IN sea INT, IN ser TEXT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT) AS $$
   BEGIN
+    RETURN QUERY
     INSERT INTO video (title, release_year, genre, min_age, duration, episode_nr, season_nr, series_name)
-      VALUES(tit, rel, gen, min, dur, epi, sea, ser);
+      VALUES(tit, rel, gen, min, dur, epi, sea, ser)
+      RETURNING *;
   END;
 $$ LANGUAGE plpgsql;
 
 -- Im neu hinzugefügten Film eine mitwirkende Person einfügen --
-CREATE OR REPLACE FUNCTION insert_video_role(IN tit TEXT, IN rel INT, IN sur TEXT, IN forn TEXT, IN rol TEXT[]) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION insert_video_role(IN tit TEXT, IN rel INT, IN sur TEXT, IN forn TEXT, IN rol TEXT[]) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Nachname TEXT, Vorname TEXT, Rolle TEXT[]) AS $$
   BEGIN
+    RETURN QUERY
     INSERT INTO acts(title,release_year,surname,forname,role) 
-      VALUES(tit, rel,sur,forn,rol);
+      VALUES(tit, rel,sur,forn,rol)
+      RETURNING *;
   END;
 $$ LANGUAGE plpgsql;
 
@@ -167,8 +171,9 @@ CREATE OR REPLACE FUNCTION show_all_videos() RETURNS table (Videoname text) AS $
 $$ LANGUAGE plpgsql;
 
 -- Ändern der Filmattribute --
-CREATE OR REPLACE FUNCTION update_video(IN old_tit TEXT, IN old_rel int, IN tit TEXT, IN rel INT, IN gen TEXT[], IN min INT, IN dur INT, IN epi INT, IN sea INT, IN ser TEXT) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION update_video(IN old_tit TEXT, IN old_rel int, IN tit TEXT, IN rel INT, IN gen TEXT[], IN min INT, IN dur INT, IN epi INT, IN sea INT, IN ser TEXT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT) AS $$
   BEGIN
+    RETURN QUERY
     UPDATE video
       SET title = tit,
         release_year = rel,
@@ -178,7 +183,8 @@ CREATE OR REPLACE FUNCTION update_video(IN old_tit TEXT, IN old_rel int, IN tit 
 	episode_nr = epi,
 	season_nr = sea,
 	series_name = ser
-      WHERE title = old_tit and release_year = old_rel;
+      WHERE title = old_tit and release_year = old_rel
+      RETURNING *; --returning updated row
   END;
 $$ LANGUAGE plpgsql;
 
@@ -211,6 +217,16 @@ CREATE OR REPLACE FUNCTION del_video(IN tit TEXT, IN rel INT) RETURNS TABLE(Tite
       RETURNING *; --return deleted elements
   END;
 $$ LANGUAGE plpgsql;
+
+-- Film Person Management ---------------------
+-- Person hinzufügen --
+CREATE OR REPLACE FUNCTION insert_person(IN tit TEXT, IN rel INT, IN gen TEXT[], IN min INT, IN dur INT, IN epi INT, IN sea INT, IN ser TEXT) RETURNS VOID AS $$
+  BEGIN
+    INSERT INTO video (title, release_year, genre, min_age, duration, episode_nr, season_nr, series_name)
+      VALUES(tit, rel, gen, min, dur, epi, sea, ser);
+  END;
+$$ LANGUAGE plpgsql;
+
 
 -----------------------------------------------
 -- Insert Dummy Data --------------------------
@@ -308,6 +324,9 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 -----------------------------------------------
 -- Testing ------------------------------------
 -----------------------------------------------
+-- Check User login --
+--select * from check_user('Axel');
+
 -- delete film, --
 -- then ratings in rating should be deleted too --
 --delete from video where title='Harry Potter und der Stein der Weisen' and release_year = 2001;
@@ -336,9 +355,6 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 --select insert_video('Harry Potter und der Test',2001,'{Fantasy,Abenteuer}',12,140, 1, NULL, 'Harry Potter');
 --select insert_video_role('Harry Potter und der Test',2001,'Watson','Emma', '{Schauspieler, Statist}');
 --select insert_video('Zweite Dark Folge',2017,'{Science-Fiction,Mystery,Thriller}',12,52, 2, 1, 'Dark');
-
--- Check User login --
---select * from check_user('Axel');
 
 -- show_all_videos --
 --select * from show_all_videos();
