@@ -20,6 +20,9 @@ DROP FUNCTION IF EXISTS update_person(TEXT, TEXT, TEXT, TEXT, DATE, VARCHAR(1));
 DROP FUNCTION IF EXISTS del_person(TEXT, TEXT, DATE, VARCHAR(1));
 DROP FUNCTION IF EXISTS edit_rating(TEXT, INT, TEXT, INT);
 DROP FUNCTION IF EXISTS show_all_ratings();
+DROP FUNCTION IF EXISTS genre_rating(TEXT);
+DROP FUNCTION IF EXISTS suggestion_all(TEXT);
+DROP FUNCTION IF EXISTS suggestion(TEXT);
 
 DROP TABLE IF EXISTS Acts;
 DROP TABLE IF EXISTS rating;
@@ -122,7 +125,7 @@ CREATE TABLE Acts(
 -- delete film, when film related person gets deleted --
 CREATE OR REPLACE FUNCTION also_del_film() RETURNS TRIGGER AS $$
   BEGIN
-    FOR i in 1..(SELECT COUNT(*) FROM acts where surname='Stiebitz' and forname='Gina') LOOP
+    FOR i in 1..(SELECT COUNT(*) FROM acts where surname=old.surname and forname=old.forname) LOOP
       DELETE FROM Video
         WHERE release_year = (select release_year from acts where acts.surname = old.surname and acts.forname = old.forname LIMIT 1)
           AND title = (select title from acts where acts.surname = old.surname and acts.forname = old.forname LIMIT 1);
@@ -144,7 +147,7 @@ CREATE OR REPLACE FUNCTION check_user(IN benutzer_name TEXT) RETURNS TEXT AS $$
     IF ((select name from benutzer where name=benutzer_name) IS NULL) then
       return 'Benutzer existiert nicht';
     ELSE
-      return 'Herzlich Willkommen!';
+      return 'Herzlich Willkommen ' || benutzer_name || '!';
     END IF;
   END;
 $$ LANGUAGE plpgsql;
@@ -307,20 +310,54 @@ CREATE OR REPLACE FUNCTION show_all_ratings() RETURNS TABLE(Titel TEXT, Erschein
   END;
 $$ LANGUAGE plpgsql;
 
--- Filmvorschläge -----------------------------
-CREATE OR REPLACE FUNCTION suggestion(IN nam TEXT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT) AS $$
+-- Algorithmus Filmvorschläge -----------------
+-- Genre Raiting --
+CREATE OR REPLACE FUNCTION genre_rating(IN nam TEXT) RETURNS TABLE(Durchschnitt NUMERIC, Genre TEXT) --TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT)
+AS $$
   BEGIN
     -- user hat keine videos bewertet:
     IF (SELECT COUNT(*) FROM rating where name=nam) = 0 THEN
-      RETURN NULL;
+      RETURN;
     -- user hat alle videos bewertet:  
     ELSIF (SELECT COUNT(*) FROM rating where name=nam) = (SELECT COUNT(*) FROM video) THEN
-      RETURN NULL;
+      RETURN;
     ELSE
-    --TBD
-    --RETURN QUERY
-    --SELECT * FROM rating
-    --ORDER BY name, title, release_year;
+      RETURN QUERY
+      SELECT AVG(r.rating) as average, unnest(v.genre)
+        FROM video v JOIN rating r ON (v.title=r.title AND v.release_year=r.release_year)
+        WHERE r.name=nam
+        GROUP BY unnest(v.genre)
+        ORDER BY average DESC;
+    END IF;
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Filmvorschläge (alle Film) --
+CREATE OR REPLACE FUNCTION suggestion_all(IN nam TEXT) RETURNS TABLE(Resultat NUMERIC, Titel TEXT, Erscheinungsjahr INT) --TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT)
+AS $$
+  BEGIN
+    RETURN QUERY
+    SELECT ROUND(AVG(s.Durchschnitt), 2) AS Resultat, v.title, v.release_year --,v.genre ,s.genre, r.name 
+      FROM genre_rating(nam) s 
+      JOIN video v ON s.genre = ANY(v.genre)
+      --Versuch direkt nach nicht geschauten Filmen zu filtern
+      --JOIN rating r ON (v.title=r.title AND v.release_year=r.release_year)
+      --WHERE NOT(r.name=nam)
+      GROUP BY (v.title, v.release_year)
+      ORDER BY Resultat DESC;
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Filmvorschläge (nur noch nicht geschaute Filme) --
+CREATE OR REPLACE FUNCTION suggestion(IN nam TEXT) RETURNS TABLE(Resultat NUMERIC, Titel TEXT, Erscheinungsjahr INT) --TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT)
+AS $$
+  BEGIN
+    RETURN QUERY
+    SELECT s.*
+      FROM suggestion_all(nam) s 
+      LEFT JOIN ( select * from rating where name=nam) r  ON (s.Titel=r.title AND s.Erscheinungsjahr=r.release_year)
+      WHERE r.name is NULL
+      ORDER BY Resultat DESC;
   END;
 $$ LANGUAGE plpgsql;
 
@@ -495,4 +532,39 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 -- show all ratings --
 -- then all ratings should be shown --
 --select * from show_all_ratings();
+
+-- Genre Raiting ausprobieren --
+-- 1) User, der keine Bewertungen abgegeben hat -> Mats --
+-- then keine Rückgabe sollte outcome sein --
+--select * from genre_rating('Mats');
+-- 2) User, der alle Bewertungen abgegeben hat -> Tina --
+-- then keine Rückgabe sollte outcome sein --
+--select * from genre_rating('Tina');
+-- 3) User der einige Bewertungen abgegeben hat -> Axel --
+-- then keine Rückgabe sollte outcome sein --
+--select * from genre_rating('Axel');
+
+-- Filmvorschläge (alle Filme) ausprobieren --
+-- 1) User, der keine Bewertungen abgegeben hat -> Mats --
+-- then keine Rückgabe sollte outcome sein --
+--select * from suggestion_all('Mats');
+-- 2) User, der alle Bewertungen abgegeben hat -> Tina --
+-- then keine Rückgabe sollte outcome sein --
+--select * from suggestion_all('Tina');
+-- 3) User der einige Bewertungen abgegeben hat -> Axel --
+-- then keine Rückgabe sollte outcome sein --
+--select * from suggestion_all('Axel');
+
+-- Filmvorschläge (nur noch nicht geschaute Filme) ausprobieren --
+-- 1) User, der keine Bewertungen abgegeben hat -> Mats --
+-- then keine Rückgabe sollte outcome sein --
+--select * from suggestion('Mats');
+-- 2) User, der alle Bewertungen abgegeben hat -> Tina --
+-- then keine Rückgabe sollte outcome sein --
+--select * from suggestion('Tina');
+-- 3) User der einige Bewertungen abgegeben hat -> Axel --
+-- then keine Rückgabe sollte outcome sein --
+--select * from suggestion('Axel');
+-- Achtung: da basierend auf Genre, kann es sein, dass keine Vorschläge, 
+  -- da User das Genre von nicht geschauten Filmen nicht mit anderen Filmen bewertet hat
 
