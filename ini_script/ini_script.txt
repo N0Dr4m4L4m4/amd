@@ -10,6 +10,8 @@ DROP FUNCTION IF EXISTS check_user(TEXT);
 DROP FUNCTION IF EXISTS insert_video(TEXT, INT, TEXT[], INT, INT, INT, INT, TEXT);
 DROP FUNCTION IF EXISTS insert_video_role(TEXT, INT, TEXT, TEXT, TEXT[]);
 DROP FUNCTION IF EXISTS show_all_videos();
+DROP FUNCTION IF EXISTS show_films_seasons(TEXT);
+DROP FUNCTION IF EXISTS show_episodes(TEXT, INT);
 DROP FUNCTION IF EXISTS update_video(TEXT, int, TEXT, INT, TEXT[], INT, INT, INT, INT, TEXT);
 DROP FUNCTION IF EXISTS del_series(TEXT);
 DROP FUNCTION IF EXISTS del_season(TEXT, INT);
@@ -190,13 +192,41 @@ CREATE OR REPLACE FUNCTION insert_video_role(IN tit TEXT, IN rel INT, IN sur TEX
 $$ LANGUAGE plpgsql;
 
 -- Überblick über alle Filme in der Datenbank --
-CREATE OR REPLACE FUNCTION show_all_videos() RETURNS table(Videoname text) AS $$
+CREATE OR REPLACE FUNCTION show_all_videos() RETURNS table(Filmname text) AS $$
   BEGIN
     RETURN QUERY
     SELECT distinct(series_name) FROM video
     ORDER BY series_name;
   END;
 $$ LANGUAGE plpgsql;
+
+-- Überblick über alle Filme aus Filmreihe oder Staffeln aus Serie --
+CREATE OR REPLACE FUNCTION show_films_seasons(IN ser TEXT) RETURNS table(Liste text) AS $$
+  BEGIN
+    IF ((SELECT season_nr FROM video where series_name = ser LIMIT 1) IS NULL) THEN
+      RETURN QUERY
+      SELECT title FROM video 
+        WHERE series_name = ser
+	ORDER BY episode_nr, series_name;
+    ELSE
+      RETURN QUERY
+      SELECT CAST(season_nr as TEXT) from video 
+        WHERE series_name = ser
+	ORDER BY season_nr;
+    END IF;
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Überblick über alle Episoden einer Staffel einer Serie
+CREATE OR REPLACE FUNCTION show_episodes(IN ser TEXT, IN sea INT) RETURNS table(Episodennr INT, Episodenname TEXT) AS $$
+  BEGIN
+    RETURN QUERY
+    SELECT episode_nr, title FROM video
+      WHERE series_name = ser AND season_nr = sea
+      ORDER BY episode_nr, title;
+  END;
+$$ LANGUAGE plpgsql;
+
 
 -- Ändern der Filmattribute --
 CREATE OR REPLACE FUNCTION update_video(IN old_tit TEXT, IN old_rel int, IN tit TEXT, IN rel INT, IN gen TEXT[], IN min INT, IN dur INT, IN epi INT, IN sea INT, IN ser TEXT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT) AS $$
@@ -521,6 +551,13 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 
 -- show_all_videos --
 --select * from show_all_videos();
+
+-- show film from filmreihe or season_nr from series, --
+--select * from show_films_seasons('Harry Potter');
+--select * from show_films_seasons('Dark');
+
+-- show episodes of season of series --
+--select * from show_episodes('Dark', 1);
 
 -- update video attributes --
 --select * from update_video('Musterfilm',2004, 'Musterfilmchen',2014,'{Action,Fantasy,Drama}',16,130, 1, NULL, 'Stirb Langsamer')
