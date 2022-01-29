@@ -302,11 +302,19 @@ CREATE OR REPLACE FUNCTION edit_rating(IN tit TEXT, IN rel INT, IN nam TEXT, IN 
 $$ LANGUAGE plpgsql;
 
 -- Überblick über alle Ratings in der Datenbank --
-CREATE OR REPLACE FUNCTION show_all_ratings() RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Benutzer TEXT, Bewertung INT) AS $$
+--CREATE OR REPLACE FUNCTION show_all_ratings() RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Benutzer TEXT, Bewertung INT) AS $$
+--  BEGIN
+--    RETURN QUERY
+--    SELECT * FROM rating
+--    ORDER BY name, title, release_year;
+--  END;
+--$$ LANGUAGE plpgsql;
+CREATE OR REPLACE FUNCTION show_all_ratings() RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Durchschnitt NUMERIC) AS $$
   BEGIN
     RETURN QUERY
-    SELECT * FROM rating
-    ORDER BY name, title, release_year;
+    SELECT title, release_year, ROUND(AVG(rating), 2) as durchschnitt FROM rating
+    GROUP BY (title, release_year)
+    ORDER BY durchschnitt DESC;
   END;
 $$ LANGUAGE plpgsql;
 
@@ -327,7 +335,7 @@ AS $$
         FROM video v JOIN rating r ON (v.title=r.title AND v.release_year=r.release_year)
         WHERE r.name=nam
         GROUP BY unnest(v.genre)
-        ORDER BY average DESC;
+        ORDER BY average ASC;
     END IF;
   END;
 $$ LANGUAGE plpgsql;
