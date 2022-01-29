@@ -7,6 +7,7 @@ DROP TRIGGER IF EXISTS trig_also_del_film on film_related_person;
 DROP FUNCTION IF EXISTS also_del_film();
 
 DROP FUNCTION IF EXISTS check_user(TEXT);
+DROP FUNCTION IF EXISTS change_username(TEXT, TEXT);
 DROP FUNCTION IF EXISTS insert_video(TEXT, INT, TEXT[], INT, INT, INT, INT, TEXT);
 DROP FUNCTION IF EXISTS insert_video_role(TEXT, INT, TEXT, TEXT, TEXT[]);
 DROP FUNCTION IF EXISTS show_all_videos();
@@ -25,7 +26,6 @@ DROP FUNCTION IF EXISTS show_all_ratings();
 DROP FUNCTION IF EXISTS genre_rating(TEXT);
 DROP FUNCTION IF EXISTS suggestion_all(TEXT);
 DROP FUNCTION IF EXISTS suggestion(TEXT);
-DROP FUNCTION IF EXISTS change_username(TEXT, TEXT);
 
 DROP TABLE IF EXISTS Acts;
 DROP TABLE IF EXISTS rating;
@@ -144,7 +144,8 @@ CREATE TRIGGER trig_also_del_film BEFORE DELETE ON film_related_person
 -----------------------------------------------
 -- Functions ----------------------------------
 -----------------------------------------------
--- check user login ---------------------------
+-- user management ----------------------------
+-- check user login --
 CREATE OR REPLACE FUNCTION check_user(IN benutzer_name TEXT) RETURNS TEXT AS $$
   BEGIN
     IF ((select name from benutzer where name=benutzer_name) IS NULL) then
@@ -155,7 +156,7 @@ CREATE OR REPLACE FUNCTION check_user(IN benutzer_name TEXT) RETURNS TEXT AS $$
   END;
 $$ LANGUAGE plpgsql;
 
--- change user name ---------------------------
+-- change user name --
 CREATE OR REPLACE FUNCTION change_username(IN old_benutzer_name TEXT, IN new_benutzer_name TEXT) RETURNS TEXT AS $$
   BEGIN
     IF ((select name from benutzer where name=old_benutzer_name) IS NULL) then
@@ -217,8 +218,8 @@ CREATE OR REPLACE FUNCTION show_films_seasons(IN ser TEXT) RETURNS table(Liste t
   END;
 $$ LANGUAGE plpgsql;
 
--- Überblick über alle Episoden einer Staffel einer Serie
-CREATE OR REPLACE FUNCTION show_episodes(IN ser TEXT, IN sea INT) RETURNS table(Episodennr INT, Episodenname TEXT) AS $$
+-- Überblick über alle Episoden einer Staffel einer Serie --
+CREATE OR REPLACE FUNCTION show_episodes(IN ser TEXT, IN sea INT) RETURNS TABLE(Episodennr INT, Episodenname TEXT) AS $$
   BEGIN
     RETURN QUERY
     SELECT episode_nr, title FROM video
@@ -227,6 +228,15 @@ CREATE OR REPLACE FUNCTION show_episodes(IN ser TEXT, IN sea INT) RETURNS table(
   END;
 $$ LANGUAGE plpgsql;
 
+-- Ausgabe eines Films (zum Ändern von Attributen) --
+CREATE OR REPLACE FUNCTION show_film(IN tit TEXT, IN rel INT, IN nam TEXT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT) AS $$
+  BEGIN
+    RETURN QUERY
+    SELECT episode_nr, title FROM video
+      WHERE series_name = ser AND season_nr = sea
+      ORDER BY episode_nr, title;
+  END;
+$$ LANGUAGE plpgsql;
 
 -- Ändern der Filmattribute --
 CREATE OR REPLACE FUNCTION update_video(IN old_tit TEXT, IN old_rel int, IN tit TEXT, IN rel INT, IN gen TEXT[], IN min INT, IN dur INT, IN epi INT, IN sea INT, IN ser TEXT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT) AS $$
