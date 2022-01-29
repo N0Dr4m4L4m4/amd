@@ -23,6 +23,7 @@ DROP FUNCTION IF EXISTS show_all_ratings();
 DROP FUNCTION IF EXISTS genre_rating(TEXT);
 DROP FUNCTION IF EXISTS suggestion_all(TEXT);
 DROP FUNCTION IF EXISTS suggestion(TEXT);
+DROP FUNCTION IF EXISTS change_username(TEXT, TEXT);
 
 DROP TABLE IF EXISTS Acts;
 DROP TABLE IF EXISTS rating;
@@ -145,9 +146,25 @@ CREATE TRIGGER trig_also_del_film BEFORE DELETE ON film_related_person
 CREATE OR REPLACE FUNCTION check_user(IN benutzer_name TEXT) RETURNS TEXT AS $$
   BEGIN
     IF ((select name from benutzer where name=benutzer_name) IS NULL) then
-      return 'Benutzer existiert nicht';
+      return 'Benutzer existiert nicht.';
     ELSE
       return 'Herzlich Willkommen ' || benutzer_name || '!';
+    END IF;
+  END;
+$$ LANGUAGE plpgsql;
+
+-- change user name ---------------------------
+CREATE OR REPLACE FUNCTION change_username(IN old_benutzer_name TEXT, IN new_benutzer_name TEXT) RETURNS TEXT AS $$
+  BEGIN
+    IF ((select name from benutzer where name=old_benutzer_name) IS NULL) then
+      return 'Benutzer existiert nicht.';
+    ELSIF (old_benutzer_name = new_benutzer_name) then
+      return 'Alter und neuer Beutzername sind identisch!';
+    ELSE
+      UPDATE benutzer
+        SET name = new_benutzer_name
+          WHERE name = old_benutzer_name;
+      return 'Benutzername von ' || old_benutzer_name || ' auf ' || new_benutzer_name || ' gewechselt.';
     END IF;
   END;
 $$ LANGUAGE plpgsql;
@@ -159,8 +176,7 @@ CREATE OR REPLACE FUNCTION insert_video(IN tit TEXT, IN rel INT, IN gen TEXT[], 
   BEGIN
     RETURN QUERY
     INSERT INTO video (title, release_year, genre, min_age, duration, episode_nr, season_nr, series_name)
-      VALUES(tit, rel, gen, min, dur, epi, sea, ser)
-      RETURNING *;
+      VALUES(tit, rel, gen, min, dur, epi, sea, ser);
   END;
 $$ LANGUAGE plpgsql;
 
@@ -169,8 +185,7 @@ CREATE OR REPLACE FUNCTION insert_video_role(IN tit TEXT, IN rel INT, IN sur TEX
   BEGIN
     RETURN QUERY
     INSERT INTO acts(title,release_year,surname,forname,role) 
-      VALUES(tit, rel,sur,forn,rol)
-      RETURNING *;
+      VALUES(tit, rel,sur,forn,rol);
   END;
 $$ LANGUAGE plpgsql;
 
@@ -465,8 +480,15 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 -----------------------------------------------
 -- Testing ------------------------------------
 -----------------------------------------------
--- Check User login --
+-- Check User login, --
+-- then 'Herzlich Willkommen "name"!' or 'Benutzer existiert nicht!' sollte angezeigt werden --
 --select * from check_user('Axel');
+
+-- change username, --
+-- then username should be changed and put out or 'alter und neuer benutzername sind identisch' --
+--select * from change_username('Axel', 'Axelino');
+--select * from change_username('raineirn', 'Axelino');
+--select * from change_username('Axel', 'Axel');
 
 -- delete film, --
 -- then ratings in rating should be deleted too --
