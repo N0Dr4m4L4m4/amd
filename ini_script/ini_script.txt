@@ -22,6 +22,7 @@ DROP FUNCTION IF EXISTS del_season(TEXT, INT);
 DROP FUNCTION IF EXISTS del_video(TEXT, INT);
 DROP FUNCTION IF EXISTS insert_person(TEXT, TEXT, DATE, VARCHAR(1));
 DROP FUNCTION IF EXISTS show_all_persons();
+DROP FUNCTION IF EXISTS show_person(TEXT, TEXT);
 DROP FUNCTION IF EXISTS update_person(TEXT, TEXT, TEXT, TEXT, DATE, VARCHAR(1));
 DROP FUNCTION IF EXISTS del_person(TEXT, TEXT, DATE, VARCHAR(1));
 DROP FUNCTION IF EXISTS edit_rating(TEXT, INT, TEXT, INT);
@@ -328,12 +329,21 @@ CREATE OR REPLACE FUNCTION insert_person(IN sur TEXT, IN forn TEXT, IN dat DATE,
   END;
 $$ LANGUAGE plpgsql;
 
--- Überblick über alle Filme in der Datenbank --
+-- Überblick über alle Personen in der Datenbank --
 CREATE OR REPLACE FUNCTION show_all_persons() RETURNS TABLE(Nachname TEXT, Vorname TEXT, Geburtstag DATE, Geschlecht VARCHAR(1)) AS $$
   BEGIN
     RETURN QUERY
     SELECT * FROM film_related_person
-    ORDER BY surname, forname;
+      ORDER BY surname, forname;
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Ausgabe einer bestimmten Person --
+CREATE OR REPLACE FUNCTION show_person(IN sur TEXT, in forn TEXT) RETURNS TABLE(Nachname TEXT, Vorname TEXT, Geburtstag DATE, Geschlecht VARCHAR(1)) AS $$
+  BEGIN
+    RETURN QUERY
+    SELECT * FROM film_related_person
+      WHERE surname = sur AND forname = forn;
   END;
 $$ LANGUAGE plpgsql;
 
@@ -638,6 +648,10 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 -- show all persons --
 -- then all persons should be printed out --
 --select * from show_all_persons();
+
+-- show single person --
+--select * from show_person('Watson', 'Emma');
+--select * from show_person('Watson', 'Emaasfda');
 
 -- update person --
 -- then person attributes should be updated and put out --
