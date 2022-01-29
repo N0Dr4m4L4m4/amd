@@ -13,6 +13,9 @@ DROP FUNCTION IF EXISTS insert_video_role(TEXT, INT, TEXT, TEXT, TEXT[]);
 DROP FUNCTION IF EXISTS show_all_videos();
 DROP FUNCTION IF EXISTS show_films_seasons(TEXT);
 DROP FUNCTION IF EXISTS show_episodes(TEXT, INT);
+DROP FUNCTION IF EXISTS show_film_attributes(TEXT, INT);
+DROP FUNCTION IF EXISTS show_film_rating(TEXT, INT, TEXT);
+DROP FUNCTION IF EXISTS show_to_film_related_persons(TEXT, INT);
 DROP FUNCTION IF EXISTS update_video(TEXT, int, TEXT, INT, TEXT[], INT, INT, INT, INT, TEXT);
 DROP FUNCTION IF EXISTS del_series(TEXT);
 DROP FUNCTION IF EXISTS del_season(TEXT, INT);
@@ -229,12 +232,40 @@ CREATE OR REPLACE FUNCTION show_episodes(IN ser TEXT, IN sea INT) RETURNS TABLE(
 $$ LANGUAGE plpgsql;
 
 -- Ausgabe eines Films (zum Ändern von Attributen) --
-CREATE OR REPLACE FUNCTION show_film(IN tit TEXT, IN rel INT, IN nam TEXT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT) AS $$
+--CREATE OR REPLACE FUNCTION show_film_attributes(IN tit TEXT, IN rel INT, IN nam TEXT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT, Bewertung INT) AS $$
+--  BEGIN
+--    RETURN QUERY
+--    SELECT v.*, r.rating FROM video v 
+--      JOIN rating r ON (v.title=r.title AND v.release_year=r.release_year)
+--      WHERE v.title = tit AND v.release_year = rel AND r.name = nam;
+--  END;
+--$$ LANGUAGE plpgsql;
+CREATE OR REPLACE FUNCTION show_film_attributes(IN tit TEXT, IN rel INT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT) AS $$
   BEGIN
     RETURN QUERY
-    SELECT episode_nr, title FROM video
-      WHERE series_name = ser AND season_nr = sea
-      ORDER BY episode_nr, title;
+    SELECT * FROM video v 
+      WHERE v.title = tit AND v.release_year = rel;
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Ausgabe des Rating eines bestimmten Films --
+CREATE OR REPLACE FUNCTION show_film_rating(IN tit TEXT, IN rel INT, IN nam TEXT, OUT Resultat INT) AS $$
+  BEGIN 
+    SELECT r.rating FROM video v 
+      JOIN rating r ON (r.title=v.title AND r.release_year=v.release_year)
+      INTO Resultat
+      WHERE v.title = tit AND v.release_year = rel AND r.name = nam;
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Ausgabe der in einem bestimmten Film mitwirkenden Personen und deren Rollen --
+-- Ausgabe des Rating eines bestimmten Films --
+CREATE OR REPLACE FUNCTION show_to_film_related_persons(IN tit TEXT, IN rel INT) RETURNS TABLE (Vorname TEXT, Nachname TEXT, Rollen TEXT[]) AS $$
+  BEGIN 
+    RETURN QUERY
+    SELECT a.surname, a.forname, a.role FROM video v 
+      JOIN acts a ON (a.title=v.title AND a.release_year=v.release_year)
+      WHERE v.title = tit AND v.release_year = rel;
   END;
 $$ LANGUAGE plpgsql;
 
@@ -568,6 +599,22 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 
 -- show episodes of season of series --
 --select * from show_episodes('Dark', 1);
+
+-- show film attributes, --
+-- then all film attributes and rating of the person (if exists) should be put out --
+--select * from show_film_attributes('Geheimnisse', 2017);
+--select * from show_film_attributes('Geheimnisse', 12341234);
+
+-- show film rating from a certain movie, --
+-- then rating should be shown if exists --
+--select * from show_film_rating('Geheimnisse', 2017, 'Axel');
+--select * from show_film_rating('Geheimnisse', 2017, 'Mats');
+
+-- show to a specific film related persons, --
+-- then persons should be put out as table --
+--select * from show_to_film_related_persons('Geheimnisse', 2017);
+--select * from show_to_film_related_persons('Der Pate', 1972);
+--select * from show_to_film_related_persons('Der nicht vorhandene Film', 1972);
 
 -- update video attributes --
 --select * from update_video('Musterfilm',2004, 'Musterfilmchen',2014,'{Action,Fantasy,Drama}',16,130, 1, NULL, 'Stirb Langsamer')
