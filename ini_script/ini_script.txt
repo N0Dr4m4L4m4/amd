@@ -202,33 +202,33 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION show_all_videos() RETURNS table(Filmname text) AS $$
   BEGIN
     RETURN QUERY
-    SELECT distinct(series_name) FROM video
+    SELECT DISTINCT(series_name) FROM video
     ORDER BY series_name;
   END;
 $$ LANGUAGE plpgsql;
 
 -- Überblick über alle Filme aus Filmreihe oder Staffeln aus Serie --
-CREATE OR REPLACE FUNCTION show_films_seasons(IN ser TEXT) RETURNS table(Liste text) AS $$
+CREATE OR REPLACE FUNCTION show_films_seasons(IN ser TEXT) RETURNS table(Liste TEXT[]) AS $$
   BEGIN
     IF ((SELECT season_nr FROM video where series_name = ser LIMIT 1) IS NULL) THEN
       RETURN QUERY
-      SELECT title FROM video 
+      SELECT ARRAY[title, CAST(release_year as TEXT)] FROM video 
         WHERE series_name = ser
 	ORDER BY episode_nr, series_name;
     ELSE
       RETURN QUERY
-      SELECT CAST(season_nr as TEXT) from video 
+      SELECT ARRAY[CAST(season_nr as TEXT)] from video 
         WHERE series_name = ser
-	ORDER BY season_nr;
+	      ORDER BY season_nr;
     END IF;
   END;
 $$ LANGUAGE plpgsql;
 
 -- Überblick über alle Episoden einer Staffel einer Serie --
-CREATE OR REPLACE FUNCTION show_episodes(IN ser TEXT, IN sea INT) RETURNS TABLE(Episodennr INT, Episodenname TEXT) AS $$
+CREATE OR REPLACE FUNCTION show_episodes(IN ser TEXT, IN sea INT) RETURNS TABLE(Episodennr INT, Episodenname TEXT, Erscheinungsjahr INT) AS $$
   BEGIN
     RETURN QUERY
-    SELECT episode_nr, title FROM video
+    SELECT episode_nr, title, release_year FROM video
       WHERE series_name = ser AND season_nr = sea
       ORDER BY episode_nr, title;
   END;
