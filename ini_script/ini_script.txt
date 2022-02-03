@@ -9,7 +9,9 @@ DROP FUNCTION IF EXISTS also_del_film();
 DROP FUNCTION IF EXISTS check_user(TEXT);
 DROP FUNCTION IF EXISTS change_username(TEXT, TEXT);
 DROP FUNCTION IF EXISTS insert_video(TEXT, INT, TEXT[], INT, INT, INT, INT, TEXT);
+DROP FUNCTION IF EXISTS show_video_role(TEXT, INT, TEXT, TEXT);
 DROP FUNCTION IF EXISTS insert_video_role(TEXT, INT, TEXT, TEXT, TEXT[]);
+DROP FUNCTION IF EXISTS del_video_role(TEXT, INT, TEXT, TEXT);
 DROP FUNCTION IF EXISTS show_all_videos();
 DROP FUNCTION IF EXISTS show_films_seasons(TEXT);
 DROP FUNCTION IF EXISTS show_episodes(TEXT, INT);
@@ -188,12 +190,34 @@ CREATE OR REPLACE FUNCTION insert_video(IN tit TEXT, IN rel INT, IN gen TEXT[], 
   END;
 $$ LANGUAGE plpgsql;
 
--- Im neu hinzugefügten Film eine mitwirkende Person einfügen --
-CREATE OR REPLACE FUNCTION insert_video_role(IN tit TEXT, IN rel INT, IN sur TEXT, IN forn TEXT, IN rol TEXT[]) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Nachname TEXT, Vorname TEXT, Rolle TEXT[]) AS $$
+-- Eine im Film mitwirkende Person zur Bearbeitung der Rollen ausgeben lassen --
+CREATE OR REPLACE FUNCTION show_video_role(IN tit TEXT, IN rel INT, IN sur TEXT, IN forn TEXT) RETURNS TABLE(Nachname TEXT, Vorname TEXT, Rolle TEXT) AS $$
   BEGIN
     RETURN QUERY
-    INSERT INTO acts(title,release_year,surname,forname,role) 
-      VALUES(tit, rel,sur,forn,rol)
+    SELECT surname, forname, array_to_string(role, ', ') FROM acts 
+      WHERE title=tit AND release_year=rel AND surname=sur AND forname=forn;
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Zu einem Film eine mitwirkende Person einfügen --
+CREATE OR REPLACE FUNCTION insert_video_role(IN tit TEXT, IN rel INT, IN sur TEXT, IN forn TEXT, IN rol TEXT[]) RETURNS TEXT AS $$
+  BEGIN
+    IF EXISTS(SELECT * FROM film_related_person WHERE surname=sur AND forname=forn) THEN
+      INSERT INTO acts(title,release_year,surname,forname,role) 
+        VALUES(tit, rel,sur,forn,rol);
+        RETURN 'Erfolgreich eingefügt';
+    ELSE
+      RETURN 'Diese Person existiert nicht in der Datenbank. Bitte fügen Sie diese zuerst hinzu!';
+    END IF;
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Lösche Mitwirken einer Person aus einem bestimmten Film --
+CREATE OR REPLACE FUNCTION del_video_role(IN tit TEXT, IN rel INT, IN sur TEXT, IN forn TEXT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Nachname TEXT, Vorname TEXT, Rollen TEXT[]) AS $$
+  BEGIN
+    RETURN QUERY
+    DELETE FROM acts 
+      WHERE title=tit AND release_year=rel AND surname=sur AND forname=forn
       RETURNING *;
   END;
 $$ LANGUAGE plpgsql;
@@ -596,11 +620,18 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 -- then sollten auch alle angezeigt werden mit Fantasy --
 --select * from video where 'Fantasy' = ANY(genre)
 
+-- Anzeige einer Person und deren Rollen in einem bestimmten Film --
+--select * from show_video_role('Geheimnisse', 2017, 'Hofmann', 'Luis');
+--select * from show_video_role('Der Pate', 1972, 'Pacino', 'Al');
+
 -- Aufruf Funktion zum Hinzufügen eines Films samt im Film mitwikrender Person --
 -- then sollte Eintrag eingefügt werden
---select insert_video('Harry Potter und der Test',2001,'{Fantasy,Abenteuer}',12,140, 1, NULL, 'Harry Potter');
---select insert_video_role('Harry Potter und der Test',2001,'Watson','Emma', '{Schauspieler, Statist}');
---select insert_video('Zweite Dark Folge',2017,'{Science-Fiction,Mystery,Thriller}',12,52, 2, 1, 'Dark');
+--select * from insert_video('Harry Potter und der Test',2001,'{Fantasy,Abenteuer}',12,140, 1, NULL, 'Harry Potter');
+--select * from insert_video_role('Harry Potter und der Test',2001,'Watson','Emma', '{Schauspieler, Statist}');
+--select * from insert_video('Zweite Dark Folge',2017,'{Science-Fiction,Mystery,Thriller}',12,52, 2, 1, 'Dark');
+
+-- Lösche Rollen einer Person aus einem Film --
+--select * from del_video_role('Geheimnisse', 2017, 'Hofmann', 'Luis');
 
 -- show_all_videos --
 --select * from show_all_videos();
