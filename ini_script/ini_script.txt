@@ -183,7 +183,8 @@ CREATE OR REPLACE FUNCTION insert_video(IN tit TEXT, IN rel INT, IN gen TEXT[], 
   BEGIN
     RETURN QUERY
     INSERT INTO video (title, release_year, genre, min_age, duration, episode_nr, season_nr, series_name)
-      VALUES(tit, rel, gen, min, dur, epi, sea, ser);
+      VALUES(tit, rel, gen, min, dur, epi, sea, ser)
+      RETURNING *;
   END;
 $$ LANGUAGE plpgsql;
 
@@ -192,7 +193,8 @@ CREATE OR REPLACE FUNCTION insert_video_role(IN tit TEXT, IN rel INT, IN sur TEX
   BEGIN
     RETURN QUERY
     INSERT INTO acts(title,release_year,surname,forname,role) 
-      VALUES(tit, rel,sur,forn,rol);
+      VALUES(tit, rel,sur,forn,rol)
+      RETURNING *;
   END;
 $$ LANGUAGE plpgsql;
 
@@ -372,7 +374,7 @@ CREATE OR REPLACE FUNCTION del_person(IN sur TEXT, IN forn TEXT) RETURNS TABLE(N
 $$ LANGUAGE plpgsql;
 
 -- Filmbewertungen Management -----------------
--- insert new rating --
+-- edit rating --
 CREATE OR REPLACE FUNCTION edit_rating(IN tit TEXT, IN rel INT, IN nam TEXT, IN rat INT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Benutzer TEXT, Bewertung INT) AS $$
   BEGIN
     IF EXISTS (SELECT * FROM rating WHERE title=tit and release_year=rel and name=nam) THEN
@@ -661,7 +663,7 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 -- then person should be deleted and put out --
 --select * from del_person('Stiebitz', 'Gina');
 
--- insert rating --
+-- edit rating --
 -- then rating should be inserted if not existing, or updated if existing and new rating is not null otherwise deleted --
 --select * from edit_rating('Geheimnisse', 2017, 'Mats', 5); --insert new rating
 --select * from edit_rating('Geheimnisse', 2017, 'Mats', 3); --update rating
