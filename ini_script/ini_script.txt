@@ -155,7 +155,7 @@ CREATE OR REPLACE FUNCTION check_user(IN benutzer_name TEXT) RETURNS TEXT AS $$
     IF ((select name from benutzer where name=benutzer_name) IS NULL) then
       return 'Benutzer existiert nicht.';
     ELSE
-      return 'Herzlich Willkommen ' || benutzer_name || '!';
+      return 'Herzlich Willkommen!';
     END IF;
   END;
 $$ LANGUAGE plpgsql;
@@ -564,7 +564,7 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 -- Testing ------------------------------------
 -----------------------------------------------
 -- Check User login, --
--- then 'Herzlich Willkommen "name"!' or 'Benutzer existiert nicht!' sollte angezeigt werden --
+-- then 'Herzlich Willkommen!' or 'Benutzer existiert nicht!' sollte angezeigt werden --
 --select * from check_user('Axel');
 
 -- change username, --
