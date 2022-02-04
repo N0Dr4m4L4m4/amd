@@ -10,7 +10,8 @@ DROP FUNCTION IF EXISTS check_user(TEXT);
 DROP FUNCTION IF EXISTS change_username(TEXT, TEXT);
 DROP FUNCTION IF EXISTS insert_video(TEXT, INT, TEXT[], INT, INT, INT, INT, TEXT);
 DROP FUNCTION IF EXISTS show_video_role(TEXT, INT, TEXT, TEXT);
-DROP FUNCTION IF EXISTS insert_video_role(TEXT, INT, TEXT, TEXT, TEXT[]);
+DROP FUNCTION IF EXISTS show_not_to_film_related_persons(TEXT, INT);
+DROP FUNCTION IF EXISTS edit_video_role(TEXT, INT, TEXT, TEXT, TEXT[]);
 DROP FUNCTION IF EXISTS del_video_role(TEXT, INT, TEXT, TEXT);
 DROP FUNCTION IF EXISTS show_all_videos();
 DROP FUNCTION IF EXISTS show_films_seasons(TEXT);
@@ -178,7 +179,7 @@ CREATE OR REPLACE FUNCTION change_username(IN old_benutzer_name TEXT, IN new_ben
   END;
 $$ LANGUAGE plpgsql;
 
-
+-----------------------------------------------
 -- Film Management ----------------------------
 -- Film hinzufügen --
 CREATE OR REPLACE FUNCTION insert_video(IN tit TEXT, IN rel INT, IN gen TEXT[], IN min INT, IN dur INT, IN epi INT, IN sea INT, IN ser TEXT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT) AS $$
@@ -199,15 +200,33 @@ CREATE OR REPLACE FUNCTION show_video_role(IN tit TEXT, IN rel INT, IN sur TEXT,
   END;
 $$ LANGUAGE plpgsql;
 
+-- Anzeige aller Personen, die noch nicht in bestimmten Film mitwirken, zum Linken einer neuen Person zu einem Film --
+CREATE OR REPLACE FUNCTION show_not_to_film_related_persons(IN tit TEXT, IN rel INT) RETURNS TABLE(Nachname TEXT, Vorname TEXT) AS $$
+  BEGIN
+    RETURN QUERY
+      SELECT a.Nachname, a.Vorname FROM show_all_persons() a
+    EXCEPT 
+      SELECT f.Nachname, f.Vorname FROM show_to_film_related_persons(tit , rel) f
+      ORDER BY Nachname, Vorname; -- gibt aus was in 1. menge und nicht in 2. menge enthalten ist
+  END;
+$$ LANGUAGE plpgsql;
+
 -- Zu einem Film eine mitwirkende Person einfügen --
-CREATE OR REPLACE FUNCTION insert_video_role(IN tit TEXT, IN rel INT, IN sur TEXT, IN forn TEXT, IN rol TEXT[]) RETURNS TEXT AS $$
+CREATE OR REPLACE FUNCTION edit_video_role(IN tit TEXT, IN rel INT, IN sur TEXT, IN forn TEXT, IN rol TEXT[]) RETURNS TEXT AS $$
   BEGIN
     IF EXISTS(SELECT * FROM film_related_person WHERE surname=sur AND forname=forn) THEN
-      INSERT INTO acts(title,release_year,surname,forname,role) 
-        VALUES(tit, rel,sur,forn,rol);
+      IF EXISTS(SELECT * FROM acts WHERE surname=sur AND forname=forn AND title=tit AND release_year=rel) THEN
+        UPDATE acts
+          SET role=rol
+            WHERE surname=sur AND forname=forn AND title=tit AND release_year=rel;
+        RETURN 'Rollen erfolgreich geupdated';
+      ELSE
+        INSERT INTO acts(title,release_year,surname,forname,role) 
+          VALUES(tit, rel,sur,forn,rol);
         RETURN 'Erfolgreich eingefügt';
+      END IF;
     ELSE
-      RETURN 'Diese Person existiert nicht in der Datenbank. Bitte fügen Sie diese zuerst hinzu!';
+      RETURN 'Leider ist etwas schief gegangen'; -- äußeres IF nicht notwendig durch function show_not_to_film_related_persons
     END IF;
   END;
 $$ LANGUAGE plpgsql;
@@ -286,13 +305,13 @@ CREATE OR REPLACE FUNCTION show_film_rating(IN tit TEXT, IN rel INT, IN nam TEXT
 $$ LANGUAGE plpgsql;
 
 -- Ausgabe der in einem bestimmten Film mitwirkenden Personen und deren Rollen --
--- Ausgabe des Rating eines bestimmten Films --
 CREATE OR REPLACE FUNCTION show_to_film_related_persons(IN tit TEXT, IN rel INT) RETURNS TABLE (Vorname TEXT, Nachname TEXT, Rollen TEXT[]) AS $$
   BEGIN 
     RETURN QUERY
     SELECT a.surname, a.forname, a.role FROM video v 
       JOIN acts a ON (a.title=v.title AND a.release_year=v.release_year)
-      WHERE v.title = tit AND v.release_year = rel;
+      WHERE v.title = tit AND v.release_year = rel
+      ORDER BY a.surname, a.forname;
   END;
 $$ LANGUAGE plpgsql;
 
@@ -303,12 +322,12 @@ CREATE OR REPLACE FUNCTION update_video(IN old_tit TEXT, IN old_rel int, IN tit 
     UPDATE video
       SET title = tit,
         release_year = rel,
-	genre = gen,
-	min_age = min,
-	duration = dur,
-	episode_nr = epi,
-	season_nr = sea,
-	series_name = ser
+        genre = gen,
+        min_age = min,
+        duration = dur,
+        episode_nr = epi,
+        season_nr = sea,
+        series_name = ser
       WHERE title = old_tit and release_year = old_rel
       RETURNING *; --returning updated row
   END;
@@ -344,6 +363,7 @@ CREATE OR REPLACE FUNCTION del_video(IN tit TEXT, IN rel INT) RETURNS TABLE(Tite
   END;
 $$ LANGUAGE plpgsql;
 
+-----------------------------------------------
 -- Film Person Management ---------------------
 -- Person hinzufügen --
 CREATE OR REPLACE FUNCTION insert_person(IN sur TEXT, IN forn TEXT, IN dat DATE, IN new_sex VARCHAR(1)) RETURNS TABLE(Nachname TEXT, Vorname TEXT, Geburtstag DATE, Geschlecht VARCHAR(1)) AS $$
@@ -397,6 +417,7 @@ CREATE OR REPLACE FUNCTION del_person(IN sur TEXT, IN forn TEXT) RETURNS TABLE(N
   END;
 $$ LANGUAGE plpgsql;
 
+-----------------------------------------------
 -- Filmbewertungen Management -----------------
 -- edit rating --
 CREATE OR REPLACE FUNCTION edit_rating(IN tit TEXT, IN rel INT, IN nam TEXT, IN rat INT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Benutzer TEXT, Bewertung INT) AS $$
@@ -440,6 +461,7 @@ CREATE OR REPLACE FUNCTION show_all_ratings() RETURNS TABLE(Titel TEXT, Erschein
   END;
 $$ LANGUAGE plpgsql;
 
+-----------------------------------------------
 -- Algorithmus Filmvorschläge -----------------
 -- Genre Raiting --
 CREATE OR REPLACE FUNCTION genre_rating(IN nam TEXT) RETURNS TABLE(Durchschnitt NUMERIC, Genre TEXT) --TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT)
@@ -624,10 +646,13 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 --select * from show_video_role('Geheimnisse', 2017, 'Hofmann', 'Luis');
 --select * from show_video_role('Der Pate', 1972, 'Pacino', 'Al');
 
+-- Anzeige Personen, die noch nicht zu bestimmten Film gelinked sind--
+--select * from show_not_to_film_related_persons('Harry Potter und der Stein der Weisen', 2001)
+
 -- Aufruf Funktion zum Hinzufügen eines Films samt im Film mitwikrender Person --
 -- then sollte Eintrag eingefügt werden
 --select * from insert_video('Harry Potter und der Test',2001,'{Fantasy,Abenteuer}',12,140, 1, NULL, 'Harry Potter');
---select * from insert_video_role('Harry Potter und der Test',2001,'Watson','Emma', '{Schauspieler, Statist}');
+--select * from edit_video_role('Harry Potter und der Test',2001,'Watson','Emma', '{Schauspieler, Statist}');
 --select * from insert_video('Zweite Dark Folge',2017,'{Science-Fiction,Mystery,Thriller}',12,52, 2, 1, 'Dark');
 
 -- Lösche Rollen einer Person aus einem Film --
