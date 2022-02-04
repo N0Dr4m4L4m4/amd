@@ -260,9 +260,9 @@ CREATE OR REPLACE FUNCTION show_films_seasons(IN ser TEXT) RETURNS table(Liste T
 	ORDER BY episode_nr, series_name;
     ELSE
       RETURN QUERY
-      SELECT ARRAY[CAST(season_nr as TEXT)] from video 
+      SELECT DISTINCT(ARRAY[CAST(season_nr as TEXT)]) as staffeln from video 
         WHERE series_name = ser
-	      ORDER BY season_nr;
+	      ORDER BY staffeln;
     END IF;
   END;
 $$ LANGUAGE plpgsql;
@@ -286,10 +286,10 @@ $$ LANGUAGE plpgsql;
 --      WHERE v.title = tit AND v.release_year = rel AND r.name = nam;
 --  END;
 --$$ LANGUAGE plpgsql;
-CREATE OR REPLACE FUNCTION show_film_attributes(IN tit TEXT, IN rel INT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT) AS $$
+CREATE OR REPLACE FUNCTION show_film_attributes(IN tit TEXT, IN rel INT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT, Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT) AS $$
   BEGIN
     RETURN QUERY
-    SELECT * FROM video v 
+    SELECT title, release_year, array_to_string(genre, ', '), min_age, duration, episode_nr, season_nr, series_name FROM video v 
       WHERE v.title = tit AND v.release_year = rel;
   END;
 $$ LANGUAGE plpgsql;
@@ -485,11 +485,11 @@ AS $$
 $$ LANGUAGE plpgsql;
 
 -- Filmvorschläge (alle Film) --
-CREATE OR REPLACE FUNCTION suggestion_all(IN nam TEXT) RETURNS TABLE(Resultat NUMERIC, Titel TEXT, Erscheinungsjahr INT) --TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT)
+CREATE OR REPLACE FUNCTION suggestion_all(IN nam TEXT) RETURNS TABLE(Resultat NUMERIC, Titel TEXT, Erscheinungsjahr INT)
 AS $$
   BEGIN
     RETURN QUERY
-    SELECT ROUND(AVG(s.Durchschnitt), 2) AS Resultat, v.title, v.release_year --,v.genre ,s.genre, r.name 
+    SELECT ROUND(AVG(s.Durchschnitt), 2) AS Resultat, v.title, v.release_year
       FROM genre_rating(nam) s 
       JOIN video v ON s.genre = ANY(v.genre)
       --Versuch direkt nach nicht geschauten Filmen zu filtern
@@ -501,7 +501,7 @@ AS $$
 $$ LANGUAGE plpgsql;
 
 -- Filmvorschläge (nur noch nicht geschaute Filme) --
-CREATE OR REPLACE FUNCTION suggestion(IN nam TEXT) RETURNS TABLE(Resultat NUMERIC, Titel TEXT, Erscheinungsjahr INT) --TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT)
+CREATE OR REPLACE FUNCTION suggestion(IN nam TEXT) RETURNS TABLE(Resultat NUMERIC, Titel TEXT, Erscheinungsjahr INT)
 AS $$
   BEGIN
     RETURN QUERY
