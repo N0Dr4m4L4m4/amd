@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Manager</class>
+ <widget class="QWidget" name="Manager">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1166</width>
+    <height>326</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>0</y>
+     <width>1151</width>
+     <height>321</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(59, 59, 88);
+border-radius:10px;
+</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QLabel" name="helloMsg">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>30</y>
+      <width>1031</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>26</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:qlineargradient(spread:reflect, x1:0, y1:1, x2:1, y2:0.307, stop:0.0909091 rgba(244, 108, 203, 255), stop:1 rgba(247, 127, 127, 255));
+font: 26pt &quot;Segoe UI&quot;;</string>
+    </property>
+    <property name="text">
+     <string>&lt;WELCOME_NOTIFY&gt;</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QFrame" name="frame_2">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>140</y>
+      <width>251</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(39, 39, 60);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>241</width>
+       <height>131</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>14</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+       <underline>false</underline>
+       <strikeout>false</strikeout>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(119, 119, 130);
+font: 14pt &quot;Segoe UI&quot;;
+</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Filme hinzufügen / löschen&lt;/p&gt;&lt;p&gt;Serien hinzufügen / löschen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QFrame" name="frame_3">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>140</y>
+      <width>261</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(39, 39, 60);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>211</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>14</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+       <underline>false</underline>
+       <strikeout>false</strikeout>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(119, 119, 130);
+font: 14pt &quot;Segoe UI&quot;;
+</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Personen hinzufügen&lt;/p&gt;&lt;p&gt;Personen löschen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="exit">
+    <property name="geometry">
+     <rect>
+      <x>1120</x>
+      <y>10</y>
+      <width>22</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton#exit{
+background-color: qlineargradient(spread:pad, x1:0, y1:0.460227, x2:1, y2:0.46, stop:0 rgba(231, 126, 186, 255), stop:1 rgba(170, 85, 255, 255));
+border-radius:10px;
+font: 10pt &quot;Segoe UI&quot;;
+color:rgb(200, 200, 200);
+}
+QPushButton#exit:hover {
+	font:  75 12pt &quot;Segoe UI&quot;;
+	color: rgb(255, 255, 255);
+}
+
+QPushButton#exit:pressed{
+	
+	color: rgb(59, 59, 88);
+}</string>
+    </property>
+    <property name="text">
+     <string>X</string>
+    </property>
+   </widget>
+   <widget class="QFrame" name="frame_5">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>140</y>
+      <width>261</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(39, 39, 60);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLabel" name="label_5">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>211</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>14</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+       <underline>false</underline>
+       <strikeout>false</strikeout>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 14pt &quot;Segoe UI&quot;;
+ color: rgb(119, 119, 130);</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Filme bewerten&lt;/p&gt;&lt;p&gt;Bewertungen ansehen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QFrame" name="frame_10">
+    <property name="geometry">
+     <rect>
+      <x>860</x>
+      <y>140</y>
+      <width>261</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>7</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(39, 39, 60);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLabel" name="label_6">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>231</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>14</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+       <underline>false</underline>
+       <strikeout>false</strikeout>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(119, 119, 130);
+font: 14pt &quot;Segoe UI&quot;;
+</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Filme und Serien die dir &lt;/p&gt;&lt;p&gt;vorgeschlagen werden&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="filmManagementButton">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>100</y>
+      <width>201</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>14</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton#filmManagementButton{
+	background-color:  qlineargradient(spread:reflect, x1:0, y1:1, x2:1, y2:0.307, stop:0.0909091 rgba(244, 108, 203, 255), stop:1 rgba(247, 127, 127, 255));
+	QFrame::Shadow:100px;
+	color: rgb(255, 255, 255);
+}
+QPushButton#filmManagementButton:hover {
+	font:  100 18pt &quot;Segoe UI&quot;;
+	color: rgb(255, 255, 255);
+}
+
+QPushButton#filmManagementButton:pressed{
+	
+	color: rgb(59, 59, 88);
+}</string>
+    </property>
+    <property name="text">
+     <string>Film-Management</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="CrewManagementButton">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>100</y>
+      <width>201</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>14</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton#CrewManagementButton{
+	background-color:  qlineargradient(spread:reflect, x1:0, y1:1, x2:1, y2:0.307, stop:0.0909091 rgba(244, 108, 203, 255), stop:1 rgba(247, 127, 127, 255));
+	QFrame::Shadow:100px;
+	color: rgb(255, 255, 255);
+}
+QPushButton#CrewManagementButton:hover {
+	font:  75 18pt &quot;Segoe UI&quot;;
+	color: rgb(255, 255, 255);
+}
+
+QPushButton#CrewManagementButton:pressed{
+	
+	color: rgb(59, 59, 88);
+}</string>
+    </property>
+    <property name="text">
+     <string>Crew-Management</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="bewertungButton">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>100</y>
+      <width>201</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>14</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton#bewertungButton{
+	background-color:  qlineargradient(spread:reflect, x1:0, y1:1, x2:1, y2:0.307, stop:0.0909091 rgba(244, 108, 203, 255), stop:1 rgba(247, 127, 127, 255));
+	QFrame::Shadow:100px;
+	color: rgb(255, 255, 255);
+}
+QPushButton#bewertungButton:hover {
+	font:  75 20pt &quot;Segoe UI&quot;;
+	color: rgb(255, 255, 255);
+}
+
+QPushButton#bewertungButton:pressed{
+	
+	color: rgb(59, 59, 88);
+}</string>
+    </property>
+    <property name="text">
+     <string>Bewertung</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="vorschlaegeButton">
+    <property name="geometry">
+     <rect>
+      <x>860</x>
+      <y>100</y>
+      <width>201</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>16</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton#vorschlaegeButton{
+	background-color:  qlineargradient(spread:reflect, x1:0, y1:1, x2:1, y2:0.307, stop:0.0909091 rgba(244, 108, 203, 255), stop:1 rgba(247, 127, 127, 255));
+	QFrame::Shadow:100px;
+	color: rgb(255, 255, 255);
+}
+QPushButton#vorschlaegeButton:hover {
+	font:  75 20pt &quot;Segoe UI&quot;;
+	color: rgb(255, 255, 255);
+}
+
+QPushButton#vorschlaegeButton:pressed{
+	
+	color: rgb(59, 59, 88);
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Vorschläge</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="editButton">
+    <property name="geometry">
+     <rect>
+      <x>1060</x>
+      <y>40</y>
+      <width>61</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>22</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton#editButton{
+color:qlineargradient(spread:reflect, x1:0, y1:1, x2:1, y2:0.307, stop:0.0909091 rgba(244, 108, 203, 255), stop:1 rgba(247, 127, 127, 255));
+font: 22pt &quot;Segoe UI&quot;;
+}
+QPushButton#editButton:hover {
+	font:  75 25pt &quot;Segoe UI&quot;;
+}
+
+QPushButton#editButton:pressed{
+	
+	color: rgb(59, 59, 88);
+}</string>
+    </property>
+    <property name="text">
+     <string>⌥</string>
+    </property>
+   </widget>
+   <zorder>frame_3</zorder>
+   <zorder>helloMsg</zorder>
+   <zorder>frame_2</zorder>
+   <zorder>exit</zorder>
+   <zorder>frame_5</zorder>
+   <zorder>frame_10</zorder>
+   <zorder>filmManagementButton</zorder>
+   <zorder>CrewManagementButton</zorder>
+   <zorder>bewertungButton</zorder>
+   <zorder>vorschlaegeButton</zorder>
+   <zorder>editButton</zorder>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

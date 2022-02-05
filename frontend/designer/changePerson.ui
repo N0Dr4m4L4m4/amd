@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>396</width>
+    <height>414</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QFrame" name="frame_3">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>391</width>
+     <height>411</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(59, 59, 88);
+border-radius:10px;
+</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QLabel" name="name">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>30</y>
+      <width>331</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>27</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: qlineargradient(spread:pad, x1:0, y1:0.460227, x2:1, y2:0.46, stop:0 rgba(231, 126, 186, 255), stop:1 rgba(170, 85, 255, 255));</string>
+    </property>
+    <property name="text">
+     <string>&lt;NAME&gt;</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="exit">
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>10</y>
+      <width>22</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton#exit{
+background-color: qlineargradient(spread:pad, x1:0, y1:0.460227, x2:1, y2:0.46, stop:0 rgba(231, 126, 186, 255), stop:1 rgba(170, 85, 255, 255));
+border-radius:10px;
+font: 10pt &quot;Segoe UI&quot;;
+color:rgb(200, 200, 200);
+}
+QPushButton#exit:hover {
+	font:  75 12pt &quot;Segoe UI&quot;;
+	color: rgb(255, 255, 255);
+}
+
+QPushButton#exit:pressed{
+	
+	color: rgb(59, 59, 88);
+}</string>
+    </property>
+    <property name="text">
+     <string>X</string>
+    </property>
+   </widget>
+   <widget class="QFrame" name="frame_9">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>110</y>
+      <width>331</width>
+      <height>241</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(39, 39, 60);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QFrame" name="frame_2">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>68</y>
+       <width>274</width>
+       <height>2</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(100, 100, 150);</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="forname">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>30</y>
+       <width>274</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 15pt &quot;Segoe UI&quot;;
+color:rgb(200, 200, 200);</string>
+     </property>
+     <property name="placeholderText">
+      <string>Vorname</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="surname">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>82</y>
+       <width>274</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 15pt &quot;Segoe UI&quot;;
+color:rgb(200, 200, 200);</string>
+     </property>
+     <property name="placeholderText">
+      <string>Nachname</string>
+     </property>
+    </widget>
+    <widget class="QFrame" name="frame_4">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>120</y>
+       <width>274</width>
+       <height>2</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(100, 100, 150);</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="dateOfBirth">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>132</y>
+       <width>274</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 15pt &quot;Segoe UI&quot;;
+color:rgb(200, 200, 200);</string>
+     </property>
+     <property name="placeholderText">
+      <string>Geburtstag</string>
+     </property>
+    </widget>
+    <widget class="QFrame" name="frame_5">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>170</y>
+       <width>274</width>
+       <height>2</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(100, 100, 150);</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="sex">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>146</x>
+       <y>185</y>
+       <width>161</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 15pt &quot;Segoe UI&quot;;
+color:rgb(200, 200, 200);</string>
+     </property>
+     <property name="currentText">
+      <string>m</string>
+     </property>
+     <item>
+      <property name="text">
+       <string>m</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>w</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>d</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QFrame" name="frame_6">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>220</y>
+       <width>274</width>
+       <height>2</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(100, 100, 150);</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>32</x>
+       <y>185</y>
+       <width>111</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 15pt &quot;Segoe UI&quot;;
+color: rgb(119, 119, 130);</string>
+     </property>
+     <property name="text">
+      <string>Geschlecht:</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="changeButton">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>370</y>
+      <width>101</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton#changeButton{
+background-color: qlineargradient(spread:pad, x1:0, y1:0.460227, x2:1, y2:0.46, stop:0 rgba(231, 126, 186, 255), stop:1 rgba(170, 85, 255, 255));
+border-radius:10px;
+font: 10pt &quot;Segoe UI&quot;;
+color:rgb(200, 200, 200);
+}
+QPushButton#changeButton:hover {
+	font:  75 12pt &quot;Segoe UI&quot;;
+	color: rgb(255, 255, 255);
+}
+
+QPushButton#changeButton:pressed{
+	
+	color: rgb(59, 59, 88);
+}</string>
+    </property>
+    <property name="text">
+     <string>Ändern</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="deleteButton">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>370</y>
+      <width>101</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton#deleteButton{
+background-color: qlineargradient(spread:reflect, x1:0, y1:1, x2:1, y2:0.307, stop:0.0909091 rgba(244, 108, 203, 255), stop:1 rgba(247, 127, 127, 255));
+border-radius:10px;
+font: 10pt &quot;Segoe UI&quot;;
+color:rgb(200, 200, 200);
+}
+QPushButton#deleteButton:hover {
+	font:  75 12pt &quot;Segoe UI&quot;;
+	color: rgb(255, 255, 255);
+}
+
+QPushButton#deleteButton:pressed{
+	
+	color: rgb(59, 59, 88);
+}</string>
+    </property>
+    <property name="text">
+     <string>Löschen</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
