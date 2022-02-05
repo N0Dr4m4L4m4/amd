@@ -305,7 +305,7 @@ CREATE OR REPLACE FUNCTION show_film_rating(IN tit TEXT, IN rel INT, IN nam TEXT
 $$ LANGUAGE plpgsql;
 
 -- Ausgabe der in einem bestimmten Film mitwirkenden Personen und deren Rollen --
-CREATE OR REPLACE FUNCTION show_to_film_related_persons(IN tit TEXT, IN rel INT) RETURNS TABLE (Vorname TEXT, Nachname TEXT, Rollen TEXT[]) AS $$
+CREATE OR REPLACE FUNCTION show_to_film_related_persons(IN tit TEXT, IN rel INT) RETURNS TABLE (Nachname TEXT, Vorname TEXT, Rollen TEXT[]) AS $$
   BEGIN 
     RETURN QUERY
     SELECT a.surname, a.forname, a.role FROM video v 
