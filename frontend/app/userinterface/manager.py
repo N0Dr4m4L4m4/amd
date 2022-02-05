@@ -37,16 +37,16 @@ class Ui_Manager(object):
         self.helloMsg.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.helloMsg.setObjectName("helloMsg")
         self.frame_2 = QtWidgets.QFrame(self.frame)
-        self.frame_2.setGeometry(QtCore.QRect(30, 140, 251, 151))
+        self.frame_2.setGeometry(QtCore.QRect(30, 140, 251, 161))
         self.frame_2.setStyleSheet("background-color: rgb(39, 39, 60);")
         self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_2.setObjectName("frame_2")
         self.label_2 = QtWidgets.QLabel(self.frame_2)
-        self.label_2.setGeometry(QtCore.QRect(10, 20, 241, 131))
+        self.label_2.setGeometry(QtCore.QRect(10, 30, 241, 121))
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
-        font.setPointSize(14)
+        font.setPointSize(12)
         font.setBold(False)
         font.setItalic(False)
         font.setUnderline(False)
@@ -54,20 +54,21 @@ class Ui_Manager(object):
         font.setStrikeOut(False)
         self.label_2.setFont(font)
         self.label_2.setStyleSheet("color: rgb(119, 119, 130);\n"
-"font: 14pt \"Segoe UI\";\n"
+"font: 12pt \"Segoe UI\";\n"
 "")
+        self.label_2.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.label_2.setObjectName("label_2")
         self.frame_3 = QtWidgets.QFrame(self.frame)
-        self.frame_3.setGeometry(QtCore.QRect(300, 140, 261, 151))
+        self.frame_3.setGeometry(QtCore.QRect(300, 140, 261, 161))
         self.frame_3.setStyleSheet("background-color: rgb(39, 39, 60);")
         self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_3.setObjectName("frame_3")
         self.label_3 = QtWidgets.QLabel(self.frame_3)
-        self.label_3.setGeometry(QtCore.QRect(10, 20, 211, 121))
+        self.label_3.setGeometry(QtCore.QRect(10, 30, 211, 111))
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
-        font.setPointSize(14)
+        font.setPointSize(12)
         font.setBold(False)
         font.setItalic(False)
         font.setUnderline(False)
@@ -75,8 +76,9 @@ class Ui_Manager(object):
         font.setStrikeOut(False)
         self.label_3.setFont(font)
         self.label_3.setStyleSheet("color: rgb(119, 119, 130);\n"
-"font: 14pt \"Segoe UI\";\n"
+"font: 12pt \"Segoe UI\";\n"
 "")
+        self.label_3.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.label_3.setObjectName("label_3")
         self.exit = QtWidgets.QPushButton(self.frame)
         self.exit.setGeometry(QtCore.QRect(1120, 10, 22, 22))
@@ -97,27 +99,29 @@ class Ui_Manager(object):
 "}")
         self.exit.setObjectName("exit")
         self.frame_5 = QtWidgets.QFrame(self.frame)
-        self.frame_5.setGeometry(QtCore.QRect(580, 140, 261, 151))
+        self.frame_5.setGeometry(QtCore.QRect(580, 140, 261, 161))
         self.frame_5.setStyleSheet("background-color: rgb(39, 39, 60);")
         self.frame_5.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_5.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_5.setObjectName("frame_5")
         self.label_5 = QtWidgets.QLabel(self.frame_5)
-        self.label_5.setGeometry(QtCore.QRect(10, 20, 211, 121))
+        self.label_5.setGeometry(QtCore.QRect(10, 30, 241, 111))
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
-        font.setPointSize(14)
+        font.setPointSize(12)
         font.setBold(False)
         font.setItalic(False)
         font.setUnderline(False)
         font.setWeight(50)
         font.setStrikeOut(False)
         self.label_5.setFont(font)
-        self.label_5.setStyleSheet("font: 14pt \"Segoe UI\";\n"
-" color: rgb(119, 119, 130);")
+        self.label_5.setStyleSheet("color: rgb(119, 119, 130);\n"
+"font: 12pt \"Segoe UI\";\n"
+"")
+        self.label_5.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.label_5.setObjectName("label_5")
         self.frame_10 = QtWidgets.QFrame(self.frame)
-        self.frame_10.setGeometry(QtCore.QRect(860, 140, 261, 151))
+        self.frame_10.setGeometry(QtCore.QRect(860, 140, 261, 161))
         font = QtGui.QFont()
         font.setPointSize(7)
         self.frame_10.setFont(font)
@@ -126,10 +130,10 @@ class Ui_Manager(object):
         self.frame_10.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_10.setObjectName("frame_10")
         self.label_6 = QtWidgets.QLabel(self.frame_10)
-        self.label_6.setGeometry(QtCore.QRect(10, 20, 231, 121))
+        self.label_6.setGeometry(QtCore.QRect(10, 30, 231, 111))
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
-        font.setPointSize(14)
+        font.setPointSize(12)
         font.setBold(False)
         font.setItalic(False)
         font.setUnderline(False)
@@ -137,8 +141,9 @@ class Ui_Manager(object):
         font.setStrikeOut(False)
         self.label_6.setFont(font)
         self.label_6.setStyleSheet("color: rgb(119, 119, 130);\n"
-"font: 14pt \"Segoe UI\";\n"
+"font: 12pt \"Segoe UI\";\n"
 "")
+        self.label_6.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.label_6.setObjectName("label_6")
         self.filmManagementButton = QtWidgets.QPushButton(self.frame)
         self.filmManagementButton.setGeometry(QtCore.QRect(30, 100, 201, 61))
@@ -237,17 +242,17 @@ class Ui_Manager(object):
         self.editButton.setGeometry(QtCore.QRect(1060, 40, 61, 41))
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
-        font.setPointSize(22)
+        font.setPointSize(25)
         font.setBold(False)
         font.setItalic(False)
         font.setWeight(50)
         self.editButton.setFont(font)
         self.editButton.setStyleSheet("QPushButton#editButton{\n"
 "color:qlineargradient(spread:reflect, x1:0, y1:1, x2:1, y2:0.307, stop:0.0909091 rgba(244, 108, 203, 255), stop:1 rgba(247, 127, 127, 255));\n"
-"font: 22pt \"Segoe UI\";\n"
+"font: 25pt \"Segoe UI\";\n"
 "}\n"
 "QPushButton#editButton:hover {\n"
-"    font:  75 25pt \"Segoe UI\";\n"
+"    font:  75 27pt \"Segoe UI\";\n"
 "}\n"
 "\n"
 "QPushButton#editButton:pressed{\n"
@@ -274,10 +279,10 @@ class Ui_Manager(object):
         _translate = QtCore.QCoreApplication.translate
         Manager.setWindowTitle(_translate("Manager", "Form"))
         self.helloMsg.setText(_translate("Manager", "<WELCOME_NOTIFY>"))
-        self.label_2.setText(_translate("Manager", "<html><head/><body><p>Filme hinzufügen / löschen</p><p>Serien hinzufügen / löschen</p></body></html>"))
+        self.label_2.setText(_translate("Manager", "<html><head/><body><p>Filme hinzufügen / löschen</p><p>Überblick über alle Filme</p><p>Filme bearbeiten/bewerten</p><p>Rollen zuweisen</p></body></html>"))
         self.label_3.setText(_translate("Manager", "<html><head/><body><p>Personen hinzufügen</p><p>Personen löschen</p></body></html>"))
         self.exit.setText(_translate("Manager", "X"))
-        self.label_5.setText(_translate("Manager", "<html><head/><body><p>Filme bewerten</p><p>Bewertungen ansehen</p></body></html>"))
+        self.label_5.setText(_translate("Manager", "<html><head/><body><p>Bewertungen ansehen</p></body></html>"))
         self.label_6.setText(_translate("Manager", "<html><head/><body><p>Filme und Serien die dir </p><p>vorgeschlagen werden</p></body></html>"))
         self.filmManagementButton.setText(_translate("Manager", "Film-Management"))
         self.CrewManagementButton.setText(_translate("Manager", "Crew-Management"))
