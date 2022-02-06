@@ -10,7 +10,7 @@ class database():
         self.conn = psycopg2.connect(**params)
         self.cur = self.conn.cursor()
 
-    def config(self,filename='app/database.ini', section='postgresql'):
+    def config(self,filename='database.ini', section='postgresql'):
         # create a parser
         parser = ConfigParser()
         # read config file
@@ -96,7 +96,7 @@ class database():
         self.conn.commit()
         return self.cur.fetchall()
 
-    def changePersonAttributes(self, oldSurname,oldForname, forname,surname,dateOfBirth,sex):
+    def changePersonAttributes(self, oldSurname,oldForname, surname,forname,dateOfBirth,sex):
         self.cur.callproc('update_person',(oldSurname,oldForname,surname,forname,dateOfBirth,sex,))
         self.conn.commit()
         return self.cur.fetchall()
