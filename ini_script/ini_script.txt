@@ -170,8 +170,8 @@ CREATE OR REPLACE FUNCTION change_username(IN old_benutzer_name TEXT, IN new_ben
       return 'Benutzer existiert nicht.';
     ELSIF (old_benutzer_name = new_benutzer_name) then
       return 'Alter und neuer Beutzername sind identisch!';
-    ELSIF (new_benutzer_name = ANY(SELECT name FROM benutzer)) THEN
-      return 'Dieser Benutzer existiert bereits. Nicht änderbar!';
+    --ELSIF (new_benutzer_name = ANY(SELECT name FROM benutzer)) THEN
+      --return 'Dieser Benutzer existiert bereits. Nicht änderbar!';
     ELSE
       UPDATE benutzer
         SET name = new_benutzer_name
