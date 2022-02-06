@@ -170,6 +170,8 @@ CREATE OR REPLACE FUNCTION change_username(IN old_benutzer_name TEXT, IN new_ben
       return 'Benutzer existiert nicht.';
     ELSIF (old_benutzer_name = new_benutzer_name) then
       return 'Alter und neuer Beutzername sind identisch!';
+    ELSIF (new_benutzer_name = ANY(SELECT name FROM benutzer)) THEN
+      return 'Dieser Benutzer existiert bereits. Nicht änderbar!';
     ELSE
       UPDATE benutzer
         SET name = new_benutzer_name
@@ -615,9 +617,10 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 
 -- change username, --
 -- then username should be changed and put out or 'alter und neuer benutzername sind identisch' --
---select * from change_username('Axel', 'Axelino');
---select * from change_username('raineirn', 'Axelino');
---select * from change_username('Axel', 'Axel');
+--select * from change_username('Axel', 'Axelino'); --Name geändert
+--select * from change_username('raineirn', 'Axelino'); --Benutzer raineirn existiert nicht
+--select * from change_username('Axel', 'Axel'); --Name ist identisch
+--select * from change_username('Axel', 'Robin'); --Robin existiert bereits als user. nicht änderbar!
 
 -- delete film, --
 -- then ratings in rating should be deleted too --
