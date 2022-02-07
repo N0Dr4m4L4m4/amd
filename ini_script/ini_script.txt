@@ -186,10 +186,12 @@ $$ LANGUAGE plpgsql;
 -- Film hinzufügen --
 CREATE OR REPLACE FUNCTION insert_video(IN tit TEXT, IN rel INT, IN gen TEXT[], IN min INT, IN dur INT, IN epi INT, IN sea INT, IN ser TEXT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT) AS $$
   BEGIN
-    RETURN QUERY
-    INSERT INTO video (title, release_year, genre, min_age, duration, episode_nr, season_nr, series_name)
-      VALUES(tit, rel, gen, min, dur, epi, sea, ser)
-      RETURNING *;
+    IF NOT EXISTS(SELECT title, release_year FROM video WHERE title=tit AND release_year=rel) THEN
+      RETURN QUERY
+      INSERT INTO video (title, release_year, genre, min_age, duration, episode_nr, season_nr, series_name)
+        VALUES(tit, rel, gen, min, dur, epi, sea, ser)
+        RETURNING *;
+    END IF;
   END;
 $$ LANGUAGE plpgsql;
 
@@ -370,10 +372,12 @@ $$ LANGUAGE plpgsql;
 -- Person hinzufügen --
 CREATE OR REPLACE FUNCTION insert_person(IN sur TEXT, IN forn TEXT, IN dat DATE, IN new_sex VARCHAR(1)) RETURNS TABLE(Nachname TEXT, Vorname TEXT, Geburtstag DATE, Geschlecht VARCHAR(1)) AS $$
   BEGIN
-    RETURN QUERY
-    INSERT INTO film_related_person(surname, forname, date_of_birth, sex)
-      VALUES(sur, forn, dat, new_sex)
-      RETURNING *;
+    IF NOT EXISTS(SELECT * from film_related_person WHERE surname=sur AND forname=forn) THEN
+      RETURN QUERY
+      INSERT INTO film_related_person(surname, forname, date_of_birth, sex)
+        VALUES(sur, forn, dat, new_sex)
+        RETURNING *;
+    END IF;
   END;
 $$ LANGUAGE plpgsql;
 
@@ -654,9 +658,11 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 
 -- Aufruf Funktion zum Hinzufügen eines Films samt im Film mitwikrender Person --
 -- then sollte Eintrag eingefügt werden
+-- falls bereits existent, dann sollte NULL zurückgegeben werden -> "Title existiert bereits"
 --select * from insert_video('Harry Potter und der Test',2001,'{Fantasy,Abenteuer}',12,140, 1, NULL, 'Harry Potter');
 --select * from edit_video_role('Harry Potter und der Test',2001,'Watson','Emma', '{Schauspieler, Statist}');
 --select * from insert_video('Zweite Dark Folge',2017,'{Science-Fiction,Mystery,Thriller}',12,52, 2, 1, 'Dark');
+--select * from insert_video('Geheimnisse',2017,'{Science-Fiction,Mystery,Thriller}',12,52, 2, 1, 'Dark');
 
 -- Lösche Rollen einer Person aus einem Film --
 --select * from del_video_role('Geheimnisse', 2017, 'Hofmann', 'Luis');
@@ -704,7 +710,9 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 
 -- insert film related person --
 -- then person should be inserted and put out --
+-- falls Person schon vorhanden, then NULL als Rückgabe -> 'diese Person ist bereits vorhanden'
 --select * from insert_person('Tester', 'Hans', '1999-12-12', 'd')
+--select * from insert_person('Watson', 'Emma', '1999-12-12', 'd')
 
 -- show all persons --
 -- then all persons should be printed out --
