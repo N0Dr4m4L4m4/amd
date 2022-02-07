@@ -441,7 +441,7 @@ CREATE OR REPLACE FUNCTION edit_rating(IN tit TEXT, IN rel INT, IN nam TEXT, IN 
 	  WHERE title=tit and release_year=rel and name=nam
           RETURNING *;
       END IF;
-    ELSE
+    ELSIF rat IS NOT NULL THEN
       RETURN QUERY
       INSERT INTO rating(title, release_year, name, rating)
         VALUES(tit, rel, nam, rat)
