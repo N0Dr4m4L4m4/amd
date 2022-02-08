@@ -40,5 +40,9 @@ class UserWindow(QtWidgets.QDialog):
     
     def changeName(self):
         response = self.database.changeUsername(self.user, self.ui.title_3.text())
-        dialog.showdialog("Name ändern","Antwort:",response[0][0])
-        self.close()
+        if 'gewechselt' in response[0][0]:
+            dialog.showdialog("Name ändern","Antwort:",response[0][0])
+            self.user = self.ui.title_3.text()
+            self.close()
+        else:
+            dialog.showdialog("Name ändern","Fehler:",response[0][0])

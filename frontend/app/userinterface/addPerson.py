@@ -60,7 +60,7 @@ class Ui_Form(object):
 "}")
         self.exit.setObjectName("exit")
         self.frame_9 = QtWidgets.QFrame(self.frame_3)
-        self.frame_9.setGeometry(QtCore.QRect(30, 110, 331, 251))
+        self.frame_9.setGeometry(QtCore.QRect(30, 110, 331, 261))
         self.frame_9.setStyleSheet("background-color: rgb(39, 39, 60);")
         self.frame_9.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_9.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -117,6 +117,11 @@ class Ui_Form(object):
         self.label.setStyleSheet("font: 15pt \"Segoe UI\";\n"
 "color: rgb(119, 119, 130);")
         self.label.setObjectName("label")
+        self.label_3 = QtWidgets.QLabel(self.frame_9)
+        self.label_3.setGeometry(QtCore.QRect(30, 240, 291, 21))
+        self.label_3.setStyleSheet("font: 10pt \"Segoe UI\";\n"
+"color: rgb(119, 119, 130);")
+        self.label_3.setObjectName("label_3")
         self.addButton = QtWidgets.QPushButton(self.frame_3)
         self.addButton.setGeometry(QtCore.QRect(30, 380, 331, 23))
         font = QtGui.QFont()
@@ -159,4 +164,5 @@ class Ui_Form(object):
         self.sex.setItemText(1, _translate("Form", "w"))
         self.sex.setItemText(2, _translate("Form", "d"))
         self.label.setText(_translate("Form", "Geschlecht:"))
+        self.label_3.setText(_translate("Form", "Alle Felder müssen valide ausgefüllt sein"))
         self.addButton.setText(_translate("Form", "Hinzufügen"))

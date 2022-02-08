@@ -21,8 +21,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
         self.ui.exit.clicked.connect(self.close)
         self.ui.login.clicked.connect(self.login)
-        self.ui.reg.clicked.connect(self.register)
-    
+        
     def center(self):
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
@@ -50,28 +49,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             
     def close(self):
         exit()
-
-    def register(self):
-        self.ui.label.setText('<html><head/><body><p><span style=" color:#be62e8;">Registrierung</span></p></body></html>')
-        self.ui.login.setText('Abbrechen')
-        self.ui.reg.setText('Registrieren')
-        self.ui.reg.clicked.connect(self.setBack)
-        self.ui.login.clicked.connect(self.abort)
-        self.ui.login.clicked.disconnect(self.login)
-        self.ui.reg.clicked.disconnect(self.register)
-
-    def abort(self):
-        self.setBack()
-
-    def setBack(self):
-        self.ui.label.setText('<html><head/><body><p><span style=" color:#be62e8;">Willkommen</span></p></body></html>')
-        self.ui.login.setText('Login')
-        self.ui.reg.setText('Registrieren')
-        self.ui.reg.clicked.connect(self.register)
-        self.ui.login.clicked.connect(self.login)
-        self.ui.reg.clicked.disconnect(self.setBack)
-        self.ui.login.clicked.disconnect(self.abort)
-    
 def main():
     if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
         QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)

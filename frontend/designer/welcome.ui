@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>464</width>
-    <height>398</height>
+    <width>346</width>
+    <height>307</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,10 +17,10 @@
    <widget class="QFrame" name="frame">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>20</y>
-      <width>401</width>
-      <height>351</height>
+      <x>0</x>
+      <y>0</y>
+      <width>341</width>
+      <height>301</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -122,52 +122,10 @@ QPushButton#login:pressed{
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QPushButton" name="reg">
-     <property name="geometry">
-      <rect>
-       <x>60</x>
-       <y>280</y>
-       <width>261</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Segoe UI</family>
-       <pointsize>10</pointsize>
-       <weight>50</weight>
-       <italic>false</italic>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="layoutDirection">
-      <enum>Qt::LeftToRight</enum>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPushButton#reg{
-background-color: qlineargradient(spread:reflect, x1:0, y1:1, x2:1, y2:0.307, stop:0.0909091 rgba(244, 108, 203, 255), stop:1 rgba(247, 127, 127, 255));
-border-radius:10px;
-font: 10pt &quot;Segoe UI&quot;;
-color:rgb(200, 200, 200);
-}
-QPushButton#reg:hover {
-	font:  75 12pt &quot;Segoe UI&quot;;
-	color: rgb(255, 255, 255);
-}
-
-QPushButton#reg:pressed{
-	
-	color: rgb(59, 59, 88);
-}</string>
-     </property>
-     <property name="text">
-      <string>Registrieren</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="exit">
      <property name="geometry">
       <rect>
-       <x>364</x>
+       <x>310</x>
        <y>10</y>
        <width>22</width>
        <height>22</height>

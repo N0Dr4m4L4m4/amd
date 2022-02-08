@@ -168,10 +168,15 @@ class Ui_AddFilm(object):
         self.season.setText("")
         self.season.setObjectName("season")
         self.label_3 = QtWidgets.QLabel(self.frame_9)
-        self.label_3.setGeometry(QtCore.QRect(10, 450, 274, 16))
-        self.label_3.setStyleSheet("font: 10pt \"Segoe UI\";\n"
+        self.label_3.setGeometry(QtCore.QRect(10, 450, 274, 20))
+        self.label_3.setStyleSheet("font: 9pt \"Segoe UI\";\n"
 "color: rgb(119, 119, 130);")
         self.label_3.setObjectName("label_3")
+        self.label_4 = QtWidgets.QLabel(self.frame_9)
+        self.label_4.setGeometry(QtCore.QRect(30, 430, 291, 21))
+        self.label_4.setStyleSheet("font: 10pt \"Segoe UI\";\n"
+"color: rgb(119, 119, 130);")
+        self.label_4.setObjectName("label_4")
         self.addButton = QtWidgets.QPushButton(self.frame_3)
         self.addButton.setGeometry(QtCore.QRect(30, 590, 331, 23))
         font = QtGui.QFont()
@@ -221,4 +226,5 @@ class Ui_AddFilm(object):
         self.label.setText(_translate("AddFilm", "Alter:"))
         self.season.setPlaceholderText(_translate("AddFilm", "Staffel*"))
         self.label_3.setText(_translate("AddFilm", "* nur für Serien"))
+        self.label_4.setText(_translate("AddFilm", "Alle Felder müssen valide ausgefüllt sein!"))
         self.addButton.setText(_translate("AddFilm", "Hinzufügen"))

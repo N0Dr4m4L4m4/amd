@@ -64,3 +64,4 @@ class ManagerWindow(QtWidgets.QWidget):
     def openUser(self):
         self.userManager = UserWindow(self.username)
         self.userManager.exec() 
+        self.username = self.userManager.user

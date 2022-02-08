@@ -14,11 +14,11 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(464, 398)
+        MainWindow.resize(346, 307)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.frame = QtWidgets.QFrame(self.centralwidget)
-        self.frame.setGeometry(QtCore.QRect(30, 20, 401, 351))
+        self.frame.setGeometry(QtCore.QRect(0, 0, 341, 301))
         self.frame.setStyleSheet("background-color: rgb(59, 59, 88);\n"
 "border-radius:25px;\n"
 "")
@@ -68,34 +68,8 @@ class Ui_MainWindow(object):
         self.login.setAutoDefault(True)
         self.login.setDefault(True)
         self.login.setObjectName("login")
-        self.reg = QtWidgets.QPushButton(self.frame)
-        self.reg.setGeometry(QtCore.QRect(60, 280, 261, 23))
-        font = QtGui.QFont()
-        font.setFamily("Segoe UI")
-        font.setPointSize(10)
-        font.setBold(False)
-        font.setItalic(False)
-        font.setWeight(50)
-        self.reg.setFont(font)
-        self.reg.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.reg.setStyleSheet("QPushButton#reg{\n"
-"background-color: qlineargradient(spread:reflect, x1:0, y1:1, x2:1, y2:0.307, stop:0.0909091 rgba(244, 108, 203, 255), stop:1 rgba(247, 127, 127, 255));\n"
-"border-radius:10px;\n"
-"font: 10pt \"Segoe UI\";\n"
-"color:rgb(200, 200, 200);\n"
-"}\n"
-"QPushButton#reg:hover {\n"
-"    font:  75 12pt \"Segoe UI\";\n"
-"    color: rgb(255, 255, 255);\n"
-"}\n"
-"\n"
-"QPushButton#reg:pressed{\n"
-"    \n"
-"    color: rgb(59, 59, 88);\n"
-"}")
-        self.reg.setObjectName("reg")
         self.exit = QtWidgets.QPushButton(self.frame)
-        self.exit.setGeometry(QtCore.QRect(364, 10, 22, 22))
+        self.exit.setGeometry(QtCore.QRect(310, 10, 22, 22))
         self.exit.setStyleSheet("QPushButton#exit{\n"
 "background-color: qlineargradient(spread:pad, x1:0, y1:0.460227, x2:1, y2:0.46, stop:0 rgba(231, 126, 186, 255), stop:1 rgba(170, 85, 255, 255));\n"
 "border-radius:10px;\n"
@@ -140,6 +114,5 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" color:#be62e8;\">Willkommen</span></p></body></html>"))
         self.login.setText(_translate("MainWindow", "Login"))
-        self.reg.setText(_translate("MainWindow", "Registrieren"))
         self.exit.setText(_translate("MainWindow", "X"))
         self.username.setPlaceholderText(_translate("MainWindow", "Username"))
