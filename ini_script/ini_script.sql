@@ -196,11 +196,11 @@ CREATE OR REPLACE FUNCTION insert_video(IN tit TEXT, IN rel INT, IN gen TEXT[], 
   END;
 $$ LANGUAGE plpgsql;
 
--- Eine im Film mitwirkende Person zur Bearbeitung der Rollen ausgeben lassen --
+-- Eine im Film mitwirkende Person zur Bearbeitung der Rollen ausgeben lassen -- (nicht benutzt)
 CREATE OR REPLACE FUNCTION show_video_role(IN tit TEXT, IN rel INT, IN sur TEXT, IN forn TEXT) RETURNS TABLE(Nachname TEXT, Vorname TEXT, Rolle TEXT) AS $$
   BEGIN
     RETURN QUERY
-    SELECT surname, forname, array_to_string(role, ', ') FROM acts 
+    SELECT surname, forname, array_to_string(role, ',') FROM acts 
       WHERE title=tit AND release_year=rel AND surname=sur AND forname=forn;
   END;
 $$ LANGUAGE plpgsql;
@@ -294,7 +294,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION show_film_attributes(IN tit TEXT, IN rel INT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT, Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT) AS $$
   BEGIN
     RETURN QUERY
-    SELECT title, release_year, array_to_string(genre, ', '), min_age, duration, episode_nr, season_nr, series_name FROM video v 
+    SELECT title, release_year, array_to_string(genre, ','), min_age, duration, episode_nr, season_nr, series_name FROM video v 
       WHERE v.title = tit AND v.release_year = rel;
   END;
 $$ LANGUAGE plpgsql;
@@ -474,9 +474,9 @@ AS $$
     -- user hat keine videos bewertet:
     IF (SELECT COUNT(*) FROM rating where name=nam) = 0 THEN
       RETURN;
-    -- user hat alle videos bewertet:  
-    ELSIF (SELECT COUNT(*) FROM rating where name=nam) = (SELECT COUNT(*) FROM video) THEN
-      RETURN;
+    -- user hat alle videos bewertet: --unterscheidung durch LEFT JOIN in suggestion function hier unnötig
+    -- ELSIF (SELECT COUNT(*) FROM rating where name=nam) = (SELECT COUNT(*) FROM video) THEN
+    --   RETURN;
     ELSE
       RETURN QUERY
       SELECT AVG(r.rating) as average, unnest(v.genre)

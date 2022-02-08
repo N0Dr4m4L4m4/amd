@@ -189,7 +189,7 @@ class changeFilmWindow(QtWidgets.QDialog):
         elif self.ui.rate.currentText() == '':
             response_rating = self.database.changeRating(self.resp[0][0], self.resp[0][1], self.user, None)
             response_rating = str(response_rating[0][0]) if response_rating else ''
-        genre = [self.ui.genre.text()]
+        genre = list(self.ui.genre.text().split(","))
         season = self.ui.season.text()
         if self.ui.season.text() == 'None' or self.ui.season.text() == '':
             season = None
