@@ -16,8 +16,8 @@ Here is the repository for the project of advanced management of data.
 - VPN connection to TU Chemnitz (use Cisco client for that)
 
 # First steps
-## 1) Install psycopg2 and PyQT5
-1. Check your python version with ```python --version``` you should receive something like: ```Python 3.9.5```
+## 1) Install Python, as well as psycopg2 and PyQT5
+1. Check your python version with ```python --version``` you should receive something like: ```Python 3.9.5```, otherwise you have to [download](https://www.python.org/downloads/) and install Python first
 2. Write down in you console ```pip install psycopg2```
 3. Next step is to download the PyQt5 required libaries
 4. Write in your console ```pip install pyqt5```
@@ -35,5 +35,5 @@ Here is the repository for the project of advanced management of data.
 2. If the VPN connection is done, you can navigate to the project folder to frontend\app
 3. Please make sure you are in the right working directory, if not an exception is thrown. It should be something like ```C:\user\amd\frontend\app\```
 4. Write into the command line interpreter  ```python welcomeClass.py``` to start the application
-5. If you see something the application is working well
+5. If you see something the application is working well - _Hint:_ make sure your screen scaling in your computer settings is set to 100%, otherwise the GUI could be too big
 6. Have fun!
