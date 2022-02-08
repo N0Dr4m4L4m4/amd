@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import * 
 
-def showdialog(title,msg1,msg2):
+def showdialog(title,msg1,msg2=''):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
         
