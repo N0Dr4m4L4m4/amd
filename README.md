@@ -36,4 +36,5 @@ Here is the repository for the project of advanced management of data.
 3. Please make sure you are in the right working directory, if not an exception is thrown. It should be something like ```C:\user\amd\frontend\app\```
 4. Write into the command line interpreter  ```python welcomeClass.py``` to start the application
 5. If you see something the application is working well - _Hint:_ make sure your screen scaling in your computer settings is set to 100%, otherwise the GUI could be too big
-6. Have fun!
+6. Firstly, you have to log on with an existing username, otherwise you get the response, that the user doesn't exit. Existing users are: Mats, Axel, Robin, Sabine or Tina.
+7. Have fun!
