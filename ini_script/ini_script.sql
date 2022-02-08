@@ -241,7 +241,7 @@ CREATE OR REPLACE FUNCTION del_video_role(IN tit TEXT, IN rel INT, IN sur TEXT, 
   BEGIN
     DELETE FROM acts 
       WHERE title=tit AND release_year=rel AND surname=sur AND forname=forn;
-    RETURN CONCAT(E'Die Person ', forn, ' ', sur, E' wurde aus dem Film gelöscht: \n  Titel: ', tit, E'\n  Erscheinungsjahr: ' ,rel); --return deleted element
+    RETURN CONCAT(E'Die Person ', forn, ' ', sur, E' wurde aus folgendem Film entfernt: \n  Titel: ', tit, E'\n  Erscheinungsjahr: ' ,rel); --return deleted element
   END;
   -- kein error checking notwendig, da in GUI nur löschbar, nachdem Person angeklickt wurde
 $$ LANGUAGE plpgsql;
