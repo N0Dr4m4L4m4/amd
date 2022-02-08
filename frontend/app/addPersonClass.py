@@ -43,9 +43,9 @@ class AddPersonWindow(QtWidgets.QDialog):
         dateOfBirth = self.ui.dateOfBirth.text()
         response = self.database.addPerson(surname, forname, sex, dateOfBirth)
         if len(response) > 0:
-            dialog.showdialog("Person hinzufügen","Folgende Person wurde hinzugefügt:", response[0][1] + " " + response[0][0] + "\n" + response[0][2].strftime("%d.%m.%Y") + "\n" + response[0][3] )
+            dialog.showdialog("Person hinzufügen",response[0][0])
             self.close()
         else:
-            dialog.showdialog("Fehler","Fehler: Person bereits vorhanden!")
+            dialog.showdialog("Fehler",response[0][0])
 
 

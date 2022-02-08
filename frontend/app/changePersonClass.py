@@ -77,5 +77,5 @@ class changePersonWindow(QtWidgets.QDialog):
 
     def uploadNewAttributes(self):
         response = self.database.changePersonAttributes(self.resp[0][0],self.resp[0][1],self.ui.surname.text(),self.ui.forname.text(),self.ui.dateOfBirth.text(),self.ui.sex.currentText())
-        dialog.showdialog("Person geändert","Folgende Daten wurden geändert:",response[0][0]+' '+response[0][1]+ '\n'+ response[0][2].strftime("%d.%m.%Y") + '\n'+ response[0][3])
+        dialog.showdialog("Person geändert",response[0][0])
         self.close()
