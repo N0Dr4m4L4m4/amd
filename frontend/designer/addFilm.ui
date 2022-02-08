@@ -381,7 +381,7 @@ color:rgb(200, 200, 200);</string>
       <string/>
      </property>
      <property name="placeholderText">
-      <string>Episode*</string>
+      <string>Episode / Filmteil</string>
      </property>
     </widget>
     <widget class="QFrame" name="frame_10">

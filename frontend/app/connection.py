@@ -27,10 +27,6 @@ class database():
         return db
 
     def addFilm(self, title, release, genre, minAge, duration, seriesName, episodeNr=None, seasonNr=None):
-        if episodeNr == '' or seasonNr == '':
-            episodeNr = 1
-            seasonNr = None
-
         self.cur.callproc('insert_video', (title,release,genre,minAge,duration,episodeNr,seasonNr,seriesName,))
         self.conn.commit()
         return self.cur.fetchall()

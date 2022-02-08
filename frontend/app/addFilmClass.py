@@ -54,12 +54,9 @@ class addFilmWindow(QtWidgets.QDialog):
         seriesName= self.ui.seriesName.text()
         response = self.database.addFilm(title,release,genre, minAge, duration, seriesName, episodeNr, season)
         if len(response) > 0:
-            dialog.showdialog("Film hinzugefügt","Folgender Film wurde hinzugefügt:",'Name: '+ response[0][0]+
-            '\nJahr: '+ str(response[0][1]) + '\nGenre: '+','.join(response[0][2])+
-            '\n' + 'Alter: '+str(response[0][3])+'\nDauer: '+str(response[0][4])+'min\nEpisode: '+
-            str(response[0][5])+'\nStaffel: '+ str(response[0][6])+'\nReihe: '+response[0][7])
+            dialog.showdialog("Film hinzugefügt",response[0][0])
             self.close()
         else:
-            dialog.showdialog("Film hinzugefügt","Fehler: Film bereits vorhanden!")
+            dialog.showdialog("Film hinzugefügt",response[0][0])
         
         

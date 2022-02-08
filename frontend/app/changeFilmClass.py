@@ -67,6 +67,11 @@ class changeFilmWindow(QtWidgets.QDialog):
                 self.ui.filmRelatedPersonsList.addItem('\t'+role)
 
     def resetInput(self):
+        if self.check: 
+            self.ui.searchPersonButton.clicked.disconnect(self.addFilmRelatedPerson)
+            self.ui.searchPersonButton.clicked.connect(self.searchForFilmRelatedPerson)
+            self.ui.searchPersonButton.setText('Suchen')
+            self.check = False
         self.ui.forname.clear()
         self.ui.surname.clear()
         self.ui.role.clear()
@@ -97,7 +102,6 @@ class changeFilmWindow(QtWidgets.QDialog):
             self.ui.surname.setText(surname)
             self.ui.role.setEnabled(True)
             self.ui.searchPersonButton.setText('Hinzufügen')
-            
             self.ui.searchPersonButton.clicked.disconnect(self.searchForFilmRelatedPerson)
             self.check = True
          
@@ -165,6 +169,7 @@ class changeFilmWindow(QtWidgets.QDialog):
         self.ui.rate.setEnabled(False)
         self.ui.changeButton.setText('Ändern')
         self.ui.deleteButton.setText('Löschen')
+        self.ui.searchPersonButton.setText('Suchen')
         self.ui.changeButton.clicked.connect(self.changeAttributes)
         self.ui.deleteButton.clicked.connect(self.deleteFilm)
         self.ui.changeButton.clicked.disconnect(self.uploadNewAttributes)
@@ -196,8 +201,5 @@ class changeFilmWindow(QtWidgets.QDialog):
         response = self.database.changeFilmAttributes(self.resp[0][0], self.resp[0][1], self.ui.title.text(), 
          self.ui.release.text(), genre, self.ui.age.currentText(), self.ui.duration.text(), 
          self.ui.episode.text(), season, self.ui.seriesName.text(),)
-        dialog.showdialog("Film geändert","Folgender Film wurde geändert:",'Name: '+ response[0][0]+
-        '\nJahr: '+ str(response[0][1]) + '\nGenre: '+','.join(response[0][2])+
-        '\n' + 'Alter: '+str(response[0][3])+'\nDauer: '+str(response[0][4])+' min\nEpisode: '+
-        str(response[0][5])+'\nStaffel: '+ str(response[0][6])+'\nReihe: '+response[0][7]+'\nBewertung: '+ response_rating)
+        dialog.showdialog("Film geändert","Folgender Film wurde geändert:",response[0][0])
         self.reset()

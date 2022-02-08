@@ -222,7 +222,7 @@ class Ui_AddFilm(object):
         self.age.setItemText(4, _translate("AddFilm", "18"))
         self.duration.setPlaceholderText(_translate("AddFilm", "Länge in Minuten"))
         self.seriesName.setPlaceholderText(_translate("AddFilm", "Serien-Name"))
-        self.episode.setPlaceholderText(_translate("AddFilm", "Episode*"))
+        self.episode.setPlaceholderText(_translate("AddFilm", "Episode / Filmteil"))
         self.label.setText(_translate("AddFilm", "Alter:"))
         self.season.setPlaceholderText(_translate("AddFilm", "Staffel*"))
         self.label_3.setText(_translate("AddFilm", "* nur für Serien"))
