@@ -27,7 +27,7 @@ DROP FUNCTION IF EXISTS insert_person(TEXT, TEXT, DATE, VARCHAR(1));
 DROP FUNCTION IF EXISTS show_all_persons();
 DROP FUNCTION IF EXISTS show_person(TEXT, TEXT);
 DROP FUNCTION IF EXISTS update_person(TEXT, TEXT, TEXT, TEXT, DATE, VARCHAR(1));
-DROP FUNCTION IF EXISTS del_person(TEXT, TEXT, DATE, VARCHAR(1));
+DROP FUNCTION IF EXISTS del_person(TEXT, TEXT);
 DROP FUNCTION IF EXISTS edit_rating(TEXT, INT, TEXT, INT);
 DROP FUNCTION IF EXISTS show_all_ratings();
 DROP FUNCTION IF EXISTS genre_rating(TEXT);
@@ -184,13 +184,14 @@ $$ LANGUAGE plpgsql;
 -----------------------------------------------
 -- Film Management ----------------------------
 -- Film hinzufügen --
-CREATE OR REPLACE FUNCTION insert_video(IN tit TEXT, IN rel INT, IN gen TEXT[], IN min INT, IN dur INT, IN epi INT, IN sea INT, IN ser TEXT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT) AS $$
+CREATE OR REPLACE FUNCTION insert_video(IN tit TEXT, IN rel INT, IN gen TEXT[], IN min INT, IN dur INT, IN epi INT, IN sea INT, IN ser TEXT) RETURNS TEXT AS $$
   BEGIN
     IF NOT EXISTS(SELECT title, release_year FROM video WHERE title=tit AND release_year=rel) THEN
-      RETURN QUERY
       INSERT INTO video (title, release_year, genre, min_age, duration, episode_nr, season_nr, series_name)
-        VALUES(tit, rel, gen, min, dur, epi, sea, ser)
-        RETURNING *;
+        VALUES(tit, rel, gen, min, dur, epi, sea, ser);
+        RETURN CONCAT(E'Folgender Film wurde hinzugefügt:\n  Titel: ', tit, E'\n  Erscheinungsjahr: ' ,rel ,E'\n  Genre: ' ,array_to_string(gen, ', ') ,E'\n  Minimumalter: ' ,min ,E'\n  Länge: ' ,dur ,E'\n  Episode: ' ,epi ,E'\n  Staffel: ' ,sea ,E'\n  Reihe: ' ,ser);
+    ELSE
+      RETURN 'Der Film ist bereits vorhanden.';
     END IF;
   END;
 $$ LANGUAGE plpgsql;
@@ -230,19 +231,19 @@ CREATE OR REPLACE FUNCTION edit_video_role(IN tit TEXT, IN rel INT, IN sur TEXT,
         RETURN 'Erfolgreich eingefügt';
       END IF;
     ELSE
-      RETURN 'Leider ist etwas schief gegangen'; -- äußeres IF nicht notwendig durch function show_not_to_film_related_persons
+      RETURN 'Leider ist etwas schief gegangen'; -- äußeres IF nicht zwingend notwendig durch function show_not_to_film_related_persons
     END IF;
   END;
 $$ LANGUAGE plpgsql;
 
 -- Lösche Mitwirken einer Person aus einem bestimmten Film --
-CREATE OR REPLACE FUNCTION del_video_role(IN tit TEXT, IN rel INT, IN sur TEXT, IN forn TEXT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Nachname TEXT, Vorname TEXT, Rollen TEXT[]) AS $$
+CREATE OR REPLACE FUNCTION del_video_role(IN tit TEXT, IN rel INT, IN sur TEXT, IN forn TEXT) RETURNS TEXT AS $$
   BEGIN
-    RETURN QUERY
     DELETE FROM acts 
-      WHERE title=tit AND release_year=rel AND surname=sur AND forname=forn
-      RETURNING *;
+      WHERE title=tit AND release_year=rel AND surname=sur AND forname=forn;
+    RETURN CONCAT(E'Die Person ', forn, ' ', sur, E' wurde aus dem Film gelöscht: \n  Titel: ', tit, E'\n  Erscheinungsjahr: ' ,rel); --return deleted element
   END;
+  -- kein error checking notwendig, da in GUI nur löschbar, nachdem Person angeklickt wurde
 $$ LANGUAGE plpgsql;
 
 -- Überblick über alle Filme in der Datenbank --
@@ -320,9 +321,8 @@ CREATE OR REPLACE FUNCTION show_to_film_related_persons(IN tit TEXT, IN rel INT)
 $$ LANGUAGE plpgsql;
 
 -- Ändern der Filmattribute --
-CREATE OR REPLACE FUNCTION update_video(IN old_tit TEXT, IN old_rel int, IN tit TEXT, IN rel INT, IN gen TEXT[], IN min INT, IN dur INT, IN epi INT, IN sea INT, IN ser TEXT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT) AS $$
+CREATE OR REPLACE FUNCTION update_video(IN old_tit TEXT, IN old_rel int, IN tit TEXT, IN rel INT, IN gen TEXT[], IN min INT, IN dur INT, IN epi INT, IN sea INT, IN ser TEXT) RETURNS TEXT AS $$
   BEGIN
-    RETURN QUERY
     UPDATE video
       SET title = tit,
         release_year = rel,
@@ -332,8 +332,8 @@ CREATE OR REPLACE FUNCTION update_video(IN old_tit TEXT, IN old_rel int, IN tit 
         episode_nr = epi,
         season_nr = sea,
         series_name = ser
-      WHERE title = old_tit and release_year = old_rel
-      RETURNING *; --returning updated row
+      WHERE title = old_tit and release_year = old_rel; 
+    RETURN CONCAT(E'Titel: ', tit, E'\n  Erscheinungsjahr: ' ,rel ,E'\n  Genre: ' ,array_to_string(gen, ', ') ,E'\n  Minimumalter: ' ,min ,E'\n  Länge: ' ,dur ,E'\n  Episode: ' ,epi ,E'\n  Staffel: ' ,sea ,E'\n  Reihe: ' ,ser);
   END;
 $$ LANGUAGE plpgsql;
 
@@ -358,25 +358,26 @@ CREATE OR REPLACE FUNCTION del_season(IN ser TEXT, IN sea INT) RETURNS TABLE(Tit
 $$ LANGUAGE plpgsql;
 
 -- Löschen von Videos --
-CREATE OR REPLACE FUNCTION del_video(IN tit TEXT, IN rel INT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Filmgenre TEXT[], Minimumalter INT, Dauer INT, Episodennr INT, Staffel INT, Reihenname TEXT) AS $$
+CREATE OR REPLACE FUNCTION del_video(IN tit TEXT, IN rel INT) RETURNS TEXT AS $$
   BEGIN
-    RETURN QUERY
     DELETE FROM video
-      WHERE title = tit AND release_year = rel
-      RETURNING *; --return deleted elements
+      WHERE title = tit AND release_year = rel; 
+    RETURN CONCAT(E'Folgender Film wurde hinzugefügt:\n  Titel: ', tit, E'\n  Erscheinungsjahr: ' ,rel); --return deleted element
   END;
+  -- kein error checking notwendig, da in GUI nur löschbar, nachdem existierender Film angeklickt wurde
 $$ LANGUAGE plpgsql;
 
 -----------------------------------------------
 -- Film Person Management ---------------------
 -- Person hinzufügen --
-CREATE OR REPLACE FUNCTION insert_person(IN sur TEXT, IN forn TEXT, IN dat DATE, IN new_sex VARCHAR(1)) RETURNS TABLE(Nachname TEXT, Vorname TEXT, Geburtstag DATE, Geschlecht VARCHAR(1)) AS $$
+CREATE OR REPLACE FUNCTION insert_person(IN sur TEXT, IN forn TEXT, IN dat DATE, IN new_sex VARCHAR(1)) RETURNS TEXT AS $$
   BEGIN
     IF NOT EXISTS(SELECT * from film_related_person WHERE surname=sur AND forname=forn) THEN
-      RETURN QUERY
       INSERT INTO film_related_person(surname, forname, date_of_birth, sex)
-        VALUES(sur, forn, dat, new_sex)
-        RETURNING *;
+        VALUES(sur, forn, dat, new_sex);
+        RETURN CONCAT(E'Folgende Person wurde hinzugefügt:\n  Nachname: ', sur, E'\n  Vorname: ' ,forn ,E'\n  Geburtsdatum: ' ,dat ,E'\n  Geschlecht: ' ,new_sex);
+    ELSE
+      RETURN 'Fehler: Person bereits vorhanden!';
     END IF;
   END;
 $$ LANGUAGE plpgsql;
@@ -400,52 +401,49 @@ CREATE OR REPLACE FUNCTION show_person(IN sur TEXT, in forn TEXT) RETURNS TABLE(
 $$ LANGUAGE plpgsql;
 
 -- Ändern der Personenattributen --
-CREATE OR REPLACE FUNCTION update_person(IN old_sur TEXT, IN old_forn TEXT, IN sur TEXT, IN forn TEXT, IN dat DATE, IN new_sex VARCHAR(1)) RETURNS TABLE(Nachname TEXT, Vorname TEXT, Geburtstag DATE, Geschlecht VARCHAR(1)) AS $$
+CREATE OR REPLACE FUNCTION update_person(IN old_sur TEXT, IN old_forn TEXT, IN sur TEXT, IN forn TEXT, IN dat DATE, IN new_sex VARCHAR(1)) RETURNS TEXT AS $$
   BEGIN
-    RETURN QUERY
     UPDATE film_related_person
       SET surname = sur,
         forname = forn,
-	date_of_birth = dat,
-	sex = new_sex
-      WHERE surname = old_sur and forname = old_forn
-      RETURNING *; --returning updated row
+        date_of_birth = dat,
+        sex = new_sex
+      WHERE surname = old_sur and forname = old_forn;
+    RETURN CONCAT(E'Folgende Person wurde geändert:\n  Nachname: ', sur, E'\n  Vorname: ' ,forn ,E'\n  Geburtsdatum: ' ,dat ,E'\n  Geschlecht: ' ,new_sex);
   END;
+  --kein error checking notwendig, in GUI können nur vorhandene Personen geupdated werden
 $$ LANGUAGE plpgsql;
 
 -- Löschen von Personen --
-CREATE OR REPLACE FUNCTION del_person(IN sur TEXT, IN forn TEXT) RETURNS TABLE(Nachname TEXT, Vorname TEXT, Geburtstag DATE, Geschlecht VARCHAR(1)) AS $$
+CREATE OR REPLACE FUNCTION del_person(IN sur TEXT, IN forn TEXT) RETURNS TEXT AS $$
   BEGIN
-    RETURN QUERY
     DELETE FROM film_related_person
-      WHERE surname = sur AND forname = forn
-      RETURNING *; --return deleted element
+      WHERE surname = sur AND forname = forn;
+    RETURN CONCAT(E'Folgende Person wurde gelöscht:\n  Nachname: ', sur, E'\n  Vorname: ' ,forn);
   END;
+  --kein error checking notwendig, in GUI können nur vorhandene Personen gelöscht werden
 $$ LANGUAGE plpgsql;
 
 -----------------------------------------------
 -- Filmbewertungen Management -----------------
 -- edit rating --
-CREATE OR REPLACE FUNCTION edit_rating(IN tit TEXT, IN rel INT, IN nam TEXT, IN rat INT) RETURNS TABLE(Titel TEXT, Erscheinungsjahr INT, Benutzer TEXT, Bewertung INT) AS $$
+CREATE OR REPLACE FUNCTION edit_rating(IN tit TEXT, IN rel INT, IN nam TEXT, IN rat INT) RETURNS TEXT AS $$
   BEGIN
     IF EXISTS (SELECT * FROM rating WHERE title=tit and release_year=rel and name=nam) THEN
       IF rat IS NULL THEN
-        RETURN QUERY
-	DELETE FROM rating
-	  WHERE title=tit and release_year=rel and name=nam
-	  RETURNING *;
+        DELETE FROM rating
+          WHERE title=tit and release_year=rel and name=nam;
+        RETURN CONCAT(rat);
       ELSE
-        RETURN QUERY
         UPDATE rating
           SET rating=rat
-	  WHERE title=tit and release_year=rel and name=nam
-          RETURNING *;
+          WHERE title=tit and release_year=rel and name=nam;
+        RETURN CONCAT(rat);
       END IF;
     ELSIF rat IS NOT NULL THEN
-      RETURN QUERY
       INSERT INTO rating(title, release_year, name, rating)
-        VALUES(tit, rel, nam, rat)
-        RETURNING *;
+        VALUES(tit, rel, nam, rat);
+      RETURN CONCAT(rat);
     END IF;
   END;
 $$ LANGUAGE plpgsql;
@@ -618,6 +616,7 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 -- Check User login, --
 -- then 'Herzlich Willkommen!' or 'Benutzer existiert nicht!' sollte angezeigt werden --
 --select * from check_user('Axel');
+--select * from check_user('Axfsdafdas');
 
 -- change username, --
 -- then username should be changed and put out or 'alter und neuer benutzername sind identisch' --
@@ -640,7 +639,7 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 
 -- delete film related person, --
 -- then role in acts and film in video should be deleted too --
---delete from film_related_person where surname='Watson';
+--delete from film_related_person where surname='Watson'; --Daniel Radcliff should also be deleted form rating in Harry Potter movies
 --select * from film_related_person;
 --select * from acts;
 --select * from video;
@@ -694,6 +693,7 @@ INSERT INTO acts(title,release_year,surname,forname,role)
 --select * from show_to_film_related_persons('Der nicht vorhandene Film', 1972);
 
 -- update video attributes --
+-- then the updated video should be printed--
 --select * from update_video('Musterfilm',2004, 'Musterfilmchen',2014,'{Action,Fantasy,Drama}',16,130, 1, NULL, 'Stirb Langsamer')
 
 -- delete series --

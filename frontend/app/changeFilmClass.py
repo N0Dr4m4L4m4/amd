@@ -185,10 +185,10 @@ class changeFilmWindow(QtWidgets.QDialog):
         response_rating = ''
         if self.ui.rate.currentText() != '':
             response_rating = self.database.changeRating(self.resp[0][0], self.resp[0][1], self.user, self.ui.rate.currentText())
-            response_rating = str(response_rating[0][3])
+            response_rating = str(response_rating[0][0])
         elif self.ui.rate.currentText() == '':
             response_rating = self.database.changeRating(self.resp[0][0], self.resp[0][1], self.user, None)
-            response_rating = str(response_rating[0][3]) if response_rating else ''
+            response_rating = str(response_rating[0][0]) if response_rating else ''
         genre = [self.ui.genre.text()]
         season = self.ui.season.text()
         if self.ui.season.text() == 'None' or self.ui.season.text() == '':
@@ -196,5 +196,5 @@ class changeFilmWindow(QtWidgets.QDialog):
         response = self.database.changeFilmAttributes(self.resp[0][0], self.resp[0][1], self.ui.title.text(), 
          self.ui.release.text(), genre, self.ui.age.currentText(), self.ui.duration.text(), 
          self.ui.episode.text(), season, self.ui.seriesName.text(),)
-        dialog.showdialog("Film geändert",response[0][0])
+        dialog.showdialog("Film geändert",response[0][0]+'\n  Bewertung: '+ response_rating)
         self.reset()

@@ -10,7 +10,7 @@ class database():
         self.conn = psycopg2.connect(**params)
         self.cur = self.conn.cursor()
 
-    def config(self,filename='app/database.ini', section='postgresql'):
+    def config(self,filename='database.ini', section='postgresql'):
         # create a parser
         parser = ConfigParser()
         # read config file

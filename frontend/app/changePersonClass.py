@@ -33,7 +33,7 @@ class changePersonWindow(QtWidgets.QDialog):
 
     def deletePerson(self):
         response = self.database.deletePerson(self.resp[0][0],self.resp[0][1])
-        dialog.showdialog("Person gelöscht","Folgende Daten wurde gelöscht:",response[0][0]+' '+response[0][1]+ '\n'+ response[0][2].strftime("%d.%m.%Y") + '\n'+ response[0][3])
+        dialog.showdialog("Person gelöscht",response[0][0])
         self.close()
 
     def center(self):
