@@ -362,7 +362,7 @@ CREATE OR REPLACE FUNCTION del_video(IN tit TEXT, IN rel INT) RETURNS TEXT AS $$
   BEGIN
     DELETE FROM video
       WHERE title = tit AND release_year = rel; 
-    RETURN CONCAT(E'Folgender Film wurde hinzugefügt:\n  Titel: ', tit, E'\n  Erscheinungsjahr: ' ,rel); --return deleted element
+    RETURN CONCAT(E'Folgender Film wurde gelöscht:\n  Titel: ', tit, E'\n  Erscheinungsjahr: ' ,rel); --return deleted element
   END;
   -- kein error checking notwendig, da in GUI nur löschbar, nachdem existierender Film angeklickt wurde
 $$ LANGUAGE plpgsql;
