@@ -22,10 +22,10 @@ Here is the repository for the project of advanced management of data.
 
 ## 2) Install Python, as well as psycopg2 and PyQT5
 1. Check your python version with ```python --version``` you should receive something like: ```Python 3.9.5```, otherwise you have to [download](https://www.python.org/downloads/) and install Python first
-2. Write down in you console ```pip install psycopg2```
+2. Write down in your console ```pip install psycopg2```, if you haven't done so far
 3. Next step is to download the PyQt5 required libaries
-4. Write in your console ```pip install pyqt5```
-5. Now we have required libary, next step we configure the connection✨
+4. Write in your console ```pip install pyqt5```, if you haven't done so far
+5. Now we have the required libaries, during the next step we configure the connection✨
 
 ## 3) Configure your database connection
 1. Open the database.ini that is in frontend/app/ directory
