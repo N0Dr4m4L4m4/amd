@@ -445,6 +445,7 @@ CREATE OR REPLACE FUNCTION edit_rating(IN tit TEXT, IN rel INT, IN nam TEXT, IN 
         VALUES(tit, rel, nam, rat);
       RETURN CONCAT(rat);
     END IF;
+    RETURN CONCAT(rat); --Sicherheit, falls in kein if reingesprungen wird
   END;
 $$ LANGUAGE plpgsql;
 
