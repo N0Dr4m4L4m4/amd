@@ -17,7 +17,7 @@ Here is the repository for the project of advanced management of data.
 
 # First steps
 ## 1) Initialize the database
-1. move to the directory `ini_script/` and copy all of the code inside the initializtaion script called `ini_script.sql` to your database
+1. move to the directory `ini_script\` and copy all of the code inside the initializtaion script called `ini_script.sql` to your database
 2. execute the code to initialize the the database, the database should output something like: '30 records of test data got successfully inserted'
 
 ## 2) Install Python, as well as psycopg2 and PyQT5
@@ -28,7 +28,7 @@ Here is the repository for the project of advanced management of data.
 5. Now we have the required libaries, during the next step we configure the connection✨
 
 ## 3) Configure your database connection
-1. Open the `database.ini` that is in the directory `frontend/app/`
+1. Open the `database.ini` that is in the directory `frontend\app\`
 2. Fill it with your given data at the first tutorial, where you initialized you postgresql database
 3. Most of your username is the name of your database concatenate with ```_rw``` e.g. your databases name is ```example``` then your username is ```example_rw```
 4. Also fill out your given password but the *host* with ```pgsql.hrz.tu-chemnitz.de``` is always the same
@@ -36,7 +36,7 @@ Here is the repository for the project of advanced management of data.
 
 ## 4) VPN connection and start the application
 1. Start the ```Cisco AnyConnect Secure Mobility Client```, if you haven't set up yet: follow this [instruction](https://www.tu-chemnitz.de/urz/network/access/vpn.html#client)
-2. If the VPN connection is done, you can navigate to the project folder to frontend\app
+2. If the VPN connection is done, you can navigate to the project folder to `frontend\app\`
 3. Please make sure you are in the right working directory, if not an exception is thrown. It should be something like ```C:\user\amd\frontend\app\```
 4. Write into the command line interpreter  ```python welcomeClass.py``` to start the application
 5. If you see something the application is working well - _Hint:_ make sure your screen scaling in your computer settings is set to 100%, otherwise the GUI could be too big
