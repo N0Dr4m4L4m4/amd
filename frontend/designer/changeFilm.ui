@@ -146,7 +146,7 @@ color:rgb(200, 200, 200);</string>
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>82</y>
+       <y>90</y>
        <width>274</width>
        <height>31</height>
       </rect>
@@ -185,7 +185,7 @@ color:rgb(200, 200, 200);</string>
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>132</y>
+       <y>140</y>
        <width>274</width>
        <height>31</height>
       </rect>
@@ -223,9 +223,9 @@ color:rgb(200, 200, 200);</string>
      </property>
      <property name="geometry">
       <rect>
-       <x>96</x>
+       <x>166</x>
        <y>185</y>
-       <width>211</width>
+       <width>141</width>
        <height>31</height>
       </rect>
      </property>
@@ -330,7 +330,7 @@ color:rgb(200, 200, 200);</string>
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>282</y>
+       <y>290</y>
        <width>274</width>
        <height>31</height>
       </rect>
@@ -372,7 +372,7 @@ color:rgb(200, 200, 200);</string>
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>330</y>
+       <y>333</y>
        <width>274</width>
        <height>31</height>
       </rect>
@@ -385,14 +385,14 @@ color:rgb(200, 200, 200);</string>
       <string/>
      </property>
      <property name="placeholderText">
-      <string>Episode*</string>
+      <string>Episode / Filmteil</string>
      </property>
     </widget>
     <widget class="QFrame" name="frame_24">
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>368</y>
+       <y>371</y>
        <width>274</width>
        <height>2</height>
       </rect>
@@ -412,7 +412,7 @@ color:rgb(200, 200, 200);</string>
       <rect>
        <x>35</x>
        <y>185</y>
-       <width>61</width>
+       <width>131</width>
        <height>31</height>
       </rect>
      </property>
@@ -421,14 +421,14 @@ color:rgb(200, 200, 200);</string>
 color: rgb(119, 119, 130);</string>
      </property>
      <property name="text">
-      <string>Alter:</string>
+      <string>Altersfreigabe:</string>
      </property>
     </widget>
     <widget class="QFrame" name="frame_25">
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>418</y>
+       <y>421</y>
        <width>274</width>
        <height>2</height>
       </rect>
@@ -450,7 +450,7 @@ color: rgb(119, 119, 130);</string>
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>380</y>
+       <y>383</y>
        <width>274</width>
        <height>31</height>
       </rect>
@@ -470,7 +470,7 @@ color:rgb(200, 200, 200);</string>
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>430</y>
+       <y>433</y>
        <width>111</width>
        <height>31</height>
       </rect>
@@ -487,7 +487,7 @@ color: rgb(119, 119, 130);</string>
      <property name="geometry">
       <rect>
        <x>270</x>
-       <y>427</y>
+       <y>430</y>
        <width>31</width>
        <height>31</height>
       </rect>
@@ -507,7 +507,7 @@ color: rgb(119, 119, 130);</string>
      <property name="geometry">
       <rect>
        <x>130</x>
-       <y>430</y>
+       <y>433</y>
        <width>141</width>
        <height>31</height>
       </rect>
@@ -569,7 +569,7 @@ color:rgb(200, 200, 200);</string>
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
+        <y>3</y>
         <width>274</width>
         <height>2</height>
        </rect>
@@ -805,6 +805,240 @@ color: rgb(119, 119, 130);</string>
      </property>
      <property name="text">
       <string>Rollen nur mit einem Komma trennen (Ohne Leerzeichen)</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_5">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>550</y>
+       <width>241</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>8</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 8pt &quot;Segoe UI&quot;;
+color: rgb(119, 119, 130);</string>
+     </property>
+     <property name="text">
+      <string>Alle Felder mit validen Werten belegen</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_6">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>570</y>
+       <width>241</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>8</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 8pt &quot;Segoe UI&quot;;
+color: rgb(119, 119, 130);</string>
+     </property>
+     <property name="text">
+      <string>* Nur für Serien</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_8">
+     <property name="geometry">
+      <rect>
+       <x>32</x>
+       <y>373</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>8</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 8pt &quot;Segoe UI&quot;;
+color: rgb(119, 119, 130);</string>
+     </property>
+     <property name="text">
+      <string>Staffel</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_11">
+     <property name="geometry">
+      <rect>
+       <x>32</x>
+       <y>322</y>
+       <width>91</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>8</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 8pt &quot;Segoe UI&quot;;
+color: rgb(119, 119, 130);</string>
+     </property>
+     <property name="text">
+      <string>Episode / Filmteil</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_12">
+     <property name="geometry">
+      <rect>
+       <x>32</x>
+       <y>273</y>
+       <width>91</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>8</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 8pt &quot;Segoe UI&quot;;
+color: rgb(119, 119, 130);</string>
+     </property>
+     <property name="text">
+      <string>Serien-Name</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_13">
+     <property name="geometry">
+      <rect>
+       <x>32</x>
+       <y>222</y>
+       <width>91</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>8</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 8pt &quot;Segoe UI&quot;;
+color: rgb(119, 119, 130);</string>
+     </property>
+     <property name="text">
+      <string>Dauer</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_14">
+     <property name="geometry">
+      <rect>
+       <x>32</x>
+       <y>122</y>
+       <width>91</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>8</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 8pt &quot;Segoe UI&quot;;
+color: rgb(119, 119, 130);</string>
+     </property>
+     <property name="text">
+      <string>Genre</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_15">
+     <property name="geometry">
+      <rect>
+       <x>32</x>
+       <y>70</y>
+       <width>91</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>8</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 8pt &quot;Segoe UI&quot;;
+color: rgb(119, 119, 130);</string>
+     </property>
+     <property name="text">
+      <string>Jahr</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_16">
+     <property name="geometry">
+      <rect>
+       <x>32</x>
+       <y>10</y>
+       <width>91</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>8</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 8pt &quot;Segoe UI&quot;;
+color: rgb(119, 119, 130);</string>
+     </property>
+     <property name="text">
+      <string>Titel</string>
      </property>
     </widget>
    </widget>
